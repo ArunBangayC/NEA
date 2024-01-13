@@ -14,6 +14,7 @@ with open("createTables.sql","r") as createTablesFile:
     cursor.executescript(createTables)
     connectionToDatabase.commit()
 
+#Creates a class for the user
 class User():
     def __init__(self,firstName,lastName,username,password):
         self.firstName = firstName
