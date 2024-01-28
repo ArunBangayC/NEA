@@ -1,11 +1,5 @@
 import sqlite3
 import time
-#psutil stuff:  
-import psutil
-
-interrupts = psutil.cpu_stats().interrupts
-
-print(interrupts)
 
 #Connecting to SQL database and creating cursor
 connectionToDatabase = sqlite3.connect("/home/arun/Documents/NEA/mainDatabase.db")

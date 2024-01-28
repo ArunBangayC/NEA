@@ -1,5 +1,8 @@
 from pynput import keyboard
 import time
+import psutil
+
+interrupts = psutil.cpu_stats().interrupts
 
 recordedKeyPresses = []
 keyPressTimes = []
@@ -25,6 +28,20 @@ for key in recordedKeyPresses:
 
 print("Sum of unicodes:",str(sumOfUnicodes))
 
+sumOfTimes = 1
 for time in keyPressTimes:
     last4Digits = time % 10000
-    print(last4Digits)
+    sumOfTimes = sumOfTimes * last4Digits
+
+print("Sum of times:",str(sumOfTimes))
+
+longRandomNumber = (sumOfTimes*sumOfUnicodes*interrupts)
+
+long_number = 12345678901234567890
+unicode_representation = ""
+
+# Convert each digit of the long number to its Unicode representation
+for digit in str(longRandomNumber):
+    unicode_representation += chr(ord(digit) + 65)  # Adding 65 to convert to Unicode characters
+    
+print("Unicode representation:", unicode_representation)
