@@ -17,16 +17,16 @@ with open("createTables.sql","r") as createTablesFile:
 #Creates a class for the user
 class User():
     def __init__(self,firstName,lastName,username,password):
-        self.firstName = firstName
-        self.lastName = lastName
-        self.username = username
-        self.hashedPassword = hashFunction(password)
+        self.__firstName = firstName
+        self.__lastName = lastName
+        self.__username = username
+        self.__hashedPassword = hashFunction(password)
     def createNewUser(self):
         addUserToDatabase = """
         INSERT INTO Users(firstName,lastName,masterUsername,masterHashedPassword)
         VALUES (?,?,?,?)
         """
-        cursor.execute(addUserToDatabase,(self.firstName,self.lastName,self.username,self.hashedPassword))
+        cursor.execute(addUserToDatabase,(self.__firstName,self.__lastName,self.__username,self.__hashedPassword))
 
 def mainMenu():
     #Makes a variable for a while loop in case the user doesn't enter L or A

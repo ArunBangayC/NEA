@@ -2,15 +2,17 @@ from pynput import keyboard
 import time
 import psutil
 
-interrupts = psutil.cpu_stats().interrupts
-
 recordedKeyPresses = []
 keyPressTimes = []
+interruptsOnKeyPress = []
 
 def onPress(key):
     #Adds recorded key presses to recordedKeyPresses list
     recordedKeyPresses.append(key)
     keyPressTimes.append(int(time.monotonic()*1000))
+    interrupt= psutil.cpu_stats().interrupts
+    interruptsOnKeyPress.append(interrupt)
+
 
 def onRelease(key):
     #Stops the listener when enter is pressed
@@ -33,15 +35,12 @@ for time in keyPressTimes:
     last4Digits = time % 10000
     sumOfTimes = sumOfTimes * last4Digits
 
+sumOfInterrupts = 0
+for i in range(len(interruptsOnKeyPress)):
+    sumOfInterrupts += interruptsOnKeyPress[0]
+
 print("Sum of times:",str(sumOfTimes))
 
-longRandomNumber = (sumOfTimes*sumOfUnicodes*interrupts)
+longRandomNumber = (sumOfTimes*sumOfUnicodes*sumOfInterrupts)
 
-long_number = 12345678901234567890
-unicode_representation = ""
-
-# Convert each digit of the long number to its Unicode representation
-for digit in str(longRandomNumber):
-    unicode_representation += chr(ord(digit) + 65)  # Adding 65 to convert to Unicode characters
-    
-print("Unicode representation:", unicode_representation)
+print("Long random number:",str(longRandomNumber))

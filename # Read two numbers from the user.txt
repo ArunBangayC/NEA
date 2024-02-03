@@ -1,0 +1,34 @@
+# Read two numbers from the user
+num1 ← COMBINED NUMBERS 
+num2 ← cpuINTERRUPTS
+# Calculate the big number by multiplying num1 and num2
+bigNumber ← num1 * num2
+
+# Read the desired length of the combined string
+customLength ← USERINPUT
+
+# Initialize an empty string to hold the combined string
+combinedString ← ""
+
+# Calculate the total number of characters needed to reach the custom length
+totalCharacters ← customLength - LEN(STRING_TO_INT(bigNumber))
+
+# Iterate through each digit in bigNumber
+FOR digit IN bigNumber DO
+    # Convert the digit to Unicode character and append it to combinedString
+    character ← CODE_TO_CHAR(digit)
+    combinedString ← combinedString + character
+ENDFOR
+
+# Check if additional characters need to be added
+IF totalCharacters > 0 THEN
+    # Add additional characters to reach the custom length
+    FOR i FROM 1 TO totalCharacters DO
+        # Generate a random letter or special character and append it to combinedString
+        randomCharacter ← CODE_TO_CHAR(RANDOM_INT(33, 126))  # ASCII range for letters and special characters
+        combinedString ← combinedString + randomCharacter
+    ENDFOR
+ENDIF
+
+# Output the combined string
+OUTPUT combinedString
