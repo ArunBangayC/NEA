@@ -2,45 +2,80 @@ from pynput import keyboard
 import time
 import psutil
 
-recordedKeyPresses = []
-keyPressTimes = []
-interruptsOnKeyPress = []
+encoding = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "!", "@", "#", "$", "%", "&", "*", "(", ")", "-", "_", "+", "=", "[", "]", "{", "}", "|", "\\", ";", ":", "'", "\"", ",", "<", ".", ">", "/", "?"]
+len36 = False
 
-def onPress(key):
-    #Adds recorded key presses to recordedKeyPresses list
-    recordedKeyPresses.append(key)
-    keyPressTimes.append(int(time.monotonic()*1000))
-    interrupt= psutil.cpu_stats().interrupts
-    interruptsOnKeyPress.append(interrupt)
+def addLettersAndChars(keyPressMilliseconds,largeRandomNumber):
+    lengthOfTimes = len(keyPressMilliseconds)
+    largeRandomList = list(str(largeRandomNumber))
+
+    #Encodes the first digits
+    lessThan4 = False
+    while lessThan4 != True:
+        for time in keyPressMilliseconds:
+            for digit in keyPressMilliseconds[time]:
+                if digit<4:
+                    largeRandomList[digit] = encoding[int(largeRandomList[digit])]
+                    lessThan4 = True
+
+    #Encodes the other digits
+    for time in keyPressMilliseconds:
+        sumOfDigits = 0
+        for digit in keyPressMilliseconds:
+            sumOfDigits += digit
+        if sumOfDigits % 2:
+            index = largeRandomList[sumOfDigits]*10 + largeRandomList[sumOfDigits+1]
+            if index <= 82:
+                largeRandomList[sumOfDigits] = encoding[index]
+                largeRandomList.remove(largeRandomList[sumOfDigits+1])
+            else:
+                largeRandomList[sumOfDigits] = encoding[sumOfDigits]
+                
 
 
-def onRelease(key):
-    #Stops the listener when enter is pressed
-    if key == keyboard.Key.enter:
-        return False
+while len36 != True:
+    recordedKeyPresses = []
+    keyPressTimes = []
+    interruptsOnKeyPress = []
+    keyPressMilliseconds = []
+
+    def onPress(key):
+        #Adds recorded key presses to recordedKeyPresses list
+        recordedKeyPresses.append(key)
+        keyPressTimes.append(int(time.monotonic()*1000))
+        interrupt= psutil.cpu_stats().interrupts
+        interruptsOnKeyPress.append(interrupt)
+
+    def onRelease(key):
+        #Stops the listener when enter is pressed
+        if key == keyboard.Key.enter:
+            return False
     
-#Starts the listener
-with keyboard.Listener(on_press=onPress, on_release=onRelease) as listener:
-    listener.join()
+    #Starts the listener
+    with keyboard.Listener(on_press=onPress, on_release=onRelease) as listener:
+        listener.join()
 
-sumOfUnicodes = 0
-for key in recordedKeyPresses:
-    if hasattr(key, 'char'): #Checks if the key pressed is a character
-        sumOfUnicodes += ord(key.char)
+    sumOfUnicodes = 0
+    for key in recordedKeyPresses:
+        if hasattr(key, 'char'): #Checks if the key pressed is a character
+            sumOfUnicodes += ord(key.char)
 
-print("Sum of unicodes:",str(sumOfUnicodes))
+    productOfDigits = 1
+    for time in keyPressTimes:
+        last4Digits = time % 10000
+        keyPressMilliseconds.append(last4Digits)
+        productOfDigits *= last4Digits
 
-sumOfTimes = 1
-for time in keyPressTimes:
-    last4Digits = time % 10000
-    sumOfTimes = sumOfTimes * last4Digits
+    sumOfInterrupts = 0
+    for i in range(len(interruptsOnKeyPress)):
+        sumOfInterrupts += interruptsOnKeyPress[i]
 
-sumOfInterrupts = 0
-for i in range(len(interruptsOnKeyPress)):
-    sumOfInterrupts += interruptsOnKeyPress[0]
+    longRandomNumber = (productOfDigits*sumOfUnicodes*sumOfInterrupts)
 
-print("Sum of times:",str(sumOfTimes))
+    if len(str(longRandomNumber)) >= 36:
+        len36 = True
+        addLettersAndChars(keyPressMilliseconds,largeRandomNumber)
+    else:
+        len36 = False
+        print("You didn't type enough characters...  Try again!")
 
-longRandomNumber = (sumOfTimes*sumOfUnicodes*sumOfInterrupts)
-
-print("Long random number:",str(longRandomNumber))
