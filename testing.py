@@ -12,11 +12,15 @@ def addLettersAndChars(keyPressMilliseconds,largeRandomNumber):
     #Encodes the first digits
     lessThan4 = False
     while lessThan4 != True:
-        for time in keyPressMilliseconds:
-            for digit in keyPressMilliseconds[time]:
-                if digit<4:
-                    largeRandomList[digit] = encoding[int(largeRandomList[digit])]
-                    lessThan4 = True
+        for i in range(len(keyPressMilliseconds)):
+            for digit in str(keyPressMilliseconds[i]):
+                digit = int(digit)
+                try:
+                    if digit<4 and int(largeRandomList[digit]):
+                        largeRandomList[digit] = encoding[int(largeRandomList[digit])]
+                        lessThan4 = True
+                except:
+                    pass
 
     #Encodes the other digits
     for time in keyPressMilliseconds:
@@ -28,9 +32,11 @@ def addLettersAndChars(keyPressMilliseconds,largeRandomNumber):
             if index <= 82:
                 largeRandomList[sumOfDigits] = encoding[index]
                 largeRandomList.remove(largeRandomList[sumOfDigits+1])
-            else:
-                largeRandomList[sumOfDigits] = encoding[sumOfDigits]
-                
+        elif sumOfDigits % 2 == 1:
+            largeRandomList[sumOfDigits] = encoding[index]
+    randomPassword = largeRandomList[:36]
+    randomPassword = ''.join(randomPassword)
+    return randomPassword
 
 
 while len36 != True:
@@ -74,7 +80,7 @@ while len36 != True:
 
     if len(str(longRandomNumber)) >= 36:
         len36 = True
-        addLettersAndChars(keyPressMilliseconds,largeRandomNumber)
+        print(addLettersAndChars(keyPressMilliseconds,longRandomNumber))
     else:
         len36 = False
         print("You didn't type enough characters...  Try again!")
