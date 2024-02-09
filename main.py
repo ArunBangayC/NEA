@@ -9,6 +9,7 @@ with open("createTables.sql","r") as createTablesFile:
     createTables = createTablesFile.read()
     cursor.executescript(createTables)
     connectionToDatabase.commit()
+    
 #Calls the mainMenu function from the menu.py file
 menu.mainMenu(cursor)
 connectionToDatabase.commit()
