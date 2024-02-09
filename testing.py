@@ -2,12 +2,12 @@ from pynput import keyboard
 import time
 import psutil
 
-encoding = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "!", "@", "#", "$", "%", "&", "*", "(", ")", "-", "_", "+", "=", "[", "]", "{", "}", "|", "\\", ";", ":", "'", "\"", ",", "<", ".", ">", "/", "?"]
+encoding = ['g', ':', 's', '*', 'C', '@', 'y', 'L', 'W', 'u', '(', 'E', '=', 'O', 'q', '>', 'm', '{', 'x', 't', '!', 'K', 'S', '<', '/', 'V', 'B', ',', 'F', '+', 'J', 'U', 'b', 'o', 'M', 'Q', '&', 'Z', ';', 'N', 'T', '"', 'j', 'Y', 'w', 'X', 'G', '}', ']', '|', 'h', 'R', '-', '$', "'", 'p', 'D', '#', '\\', 'c', 'i', 'k', 'd', 'P', 'n', 'l', 'e', 'I', 'f', 'A', 'v', 'r', ')', '%', '[', '.', 'a', '_', 'H', 'z', '?']
 len36 = False
 
-def addLettersAndChars(keyPressMilliseconds,largeRandomNumber):
+def addLettersAndChars(keyPressMilliseconds,interruptsOnKeyPress,longRandomNumber):
     lengthOfTimes = len(keyPressMilliseconds)
-    largeRandomList = list(str(largeRandomNumber))
+    longRandomList = list(str(longRandomNumber))
 
     #Encodes the first digits
     lessThan4 = False
@@ -16,29 +16,55 @@ def addLettersAndChars(keyPressMilliseconds,largeRandomNumber):
             for digit in str(keyPressMilliseconds[i]):
                 digit = int(digit)
                 try:
-                    if digit<4 and int(largeRandomList[digit]):
-                        largeRandomList[digit] = encoding[int(largeRandomList[digit])]
+                    if digit<4 and int(longRandomList[digit]):
+                        longRandomList[digit] = encoding[int(longRandomList[digit])]
                         lessThan4 = True
                 except:
                     pass
 
     #Encodes the other digits
-    for time in keyPressMilliseconds:
+    for i in range(len(keyPressMilliseconds)):
         sumOfDigits = 0
-        for digit in keyPressMilliseconds:
-            sumOfDigits += digit
-        if sumOfDigits % 2:
-            index = largeRandomList[sumOfDigits]*10 + largeRandomList[sumOfDigits+1]
-            if index <= 82:
-                largeRandomList[sumOfDigits] = encoding[index]
-                largeRandomList.remove(largeRandomList[sumOfDigits+1])
-        elif sumOfDigits % 2 == 1:
-            largeRandomList[sumOfDigits] = encoding[index]
-    randomPassword = largeRandomList[:36]
+        for digit in str(keyPressMilliseconds[i]):
+            sumOfDigits += int(digit)
+        try:
+            if int(longRandomList[sumOfDigits]) and int(longRandomList[sumOfDigits+1]):
+                index = (int(longRandomList[sumOfDigits]))*10 + (int(longRandomList[sumOfDigits+1]))
+                index = int(index)
+                if sumOfDigits % 2 == 0 and index <= 81:
+                    longRandomList[sumOfDigits] = encoding[index]
+                    longRandomList.pop(sumOfDigits + 1)
+                elif sumOfDigits % 2 == 1 and index <= 81:
+                    longRandomList[sumOfDigits] = encoding[index]
+        except:
+            pass
+    for i in range(len(interruptsOnKeyPress)):
+        sumOfInterrupt = 0
+        for interrupt in str(interruptsOnKeyPress[i]):
+            try:
+                if int(interrupt):
+                    sumOfInterrupt += int(interrupt)
+                    try:
+                        if int(longRandomList[sumOfInterrupt]) and int(longRandomList[sumOfInterrupt+1]):
+                            index = (int(longRandomList[sumOfInterrupt]))*10 + (int(longRandomList[sumOfInterrupt+1]))
+                            index = int(index)
+                            if sumOfInterrupt % 2 == 0 and index <= 81:
+                                longRandomList[sumOfInterrupt] = encoding[index]
+                                longRandomList.pop(sumOfInterrupt + 1)
+                            elif sumOfInterrupt % 2 == 1 and index <= 81:
+                                longRandomList[sumOfInterrupt] = encoding[index]
+                    except:
+                        pass
+            except:
+                pass
+    randomPassword = longRandomList[:36]
+    for i in range(len(randomPassword)):
+        randomPassword[i] = str(randomPassword[i])
     randomPassword = ''.join(randomPassword)
     return randomPassword
 
 
+len36 = False
 while len36 != True:
     recordedKeyPresses = []
     keyPressTimes = []
@@ -80,8 +106,7 @@ while len36 != True:
 
     if len(str(longRandomNumber)) >= 36:
         len36 = True
-        print(addLettersAndChars(keyPressMilliseconds,longRandomNumber))
+        print(addLettersAndChars(keyPressMilliseconds,interruptsOnKeyPress,longRandomNumber))
     else:
         len36 = False
         print("You didn't type enough characters...  Try again!")
-
