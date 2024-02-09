@@ -1,4 +1,4 @@
-import User
+from User import User
 def mainMenu(cursor):
     strongPasswordInfomation = "I recommend a password that is at least 8 characters long with a mix of letters, numbers and special characters."
     #Makes a variable for a while loop in case the user doesn't enter L or A

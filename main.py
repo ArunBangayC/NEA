@@ -11,3 +11,5 @@ with open("createTables.sql","r") as createTablesFile:
     connectionToDatabase.commit()
 #Calls the mainMenu function from the menu.py file
 menu.mainMenu(cursor)
+connectionToDatabase.commit()
+connectionToDatabase.close()
