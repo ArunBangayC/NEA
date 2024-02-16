@@ -3,7 +3,7 @@ class User():
         self.__firstName = firstName
         self.__lastName = lastName
         self.__username = username
-        self.__hashedPassword = User
+        self.__hashedPassword = User.__hashFunction(password)
     
     def createNewUser(self,cursor):
         addUserToDatabase = """
@@ -23,6 +23,7 @@ class User():
         usernameAndPassword = cursor.fetchone()
         if usernameAndPassword[0] == username and usernameAndPassword[1] == password:
             print("\nYou have successfully logged in!")
+            
             return True
         else:
             print("\nHmmmmmm, it looks like the username or password you entered is incorrect... Please try again.")

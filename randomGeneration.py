@@ -5,7 +5,7 @@ import psutil
 encoding = ['g', ':', 's', '*', 'C', '@', 'y', 'L', 'W', 'u', '(', 'E', '=', 'O', 'q', '>', 'm', '{', 'x', 't', '!', 'K', 'S', '<', '/', 'V', 'B', ',', 'F', '+', 'J', 'U', 'b', 'o', 'M', 'Q', '&', 'Z', ';', 'N', 'T', '"', 'j', 'Y', 'w', 'X', 'G', '}', ']', '|', 'h', 'R', '-', '$', "'", 'p', 'D', '#', '\\', 'c', 'i', 'k', 'd', 'P', 'n', 'l', 'e', 'I', 'f', 'A', 'v', 'r', ')', '%', '[', '.', 'a', '_', 'H', 'z', '?']
 len36 = False
 
-def addLettersAndChars(keyPressMilliseconds,interruptsOnKeyPress,longRandomNumber):
+def addLettersAndChars(keyPressMilliseconds,interruptsOnKeyPress,longRandomNumber,randomPassword):
     longRandomList = list(str(longRandomNumber))
 
     #Encodes the first digits
@@ -56,13 +56,18 @@ def addLettersAndChars(keyPressMilliseconds,interruptsOnKeyPress,longRandomNumbe
                         pass
             except:
                 pass
-    random = longRandomList[:36]
-    for i in range(len(random)):
-        random[i] = str(random[i])
-    random = ''.join(random)
-    return random
+    
 
-def takingInputs():
+
+    for i in range(len(longRandomList)):
+        longRandomList[i] = str(longRandomList[i])
+    
+    if randomPassword == True:
+        return ''.join(longRandomList[:36])
+    else:
+        return ''.join(longRandomList)
+
+def takingInputs(randomPassword):
     len36 = False
     while len36 != True:
         recordedKeyPresses = []
@@ -103,9 +108,5 @@ def takingInputs():
 
         longRandomNumber = (productOfDigits*sumOfUnicodes*sumOfInterrupts)
 
-        if len(str(longRandomNumber)) >= 36:
-            len36 = True
-            return addLettersAndChars(keyPressMilliseconds,interruptsOnKeyPress,longRandomNumber)
-        else:
-            len36 = False
-            print("You didn't type enough characters...  Try again!")
+        random = addLettersAndChars(keyPressMilliseconds,interruptsOnKeyPress,longRandomNumber,randomPassword)
+        

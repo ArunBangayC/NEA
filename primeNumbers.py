@@ -1,29 +1,19 @@
-primeNumbers = []
+def multiplyingMatrices(matrix,multiplier):
+        length = len(matrix)
+        finalMatrix = []
 
-def isPrime(n):
-    if n<2:
-        return False
-    elif n == 2 or n == 3 or n == 5:
-        primeNumbers.append(n)
-    elif n%2 == 0 or n%3 == 0 or n%5 == 0:
-        return False
-    else:
-        possibleFactors = 0
-        for i in range(2,(int(n/2)+1)):
-            if n%i == 0:
-                possibleFactors += 1
-        if possibleFactors == 0:
-            primeNumbers.append(n)
+        for i in range(length):
+            row = []
+            for j in range(length):
+                row.append(0)
+            finalMatrix.append(row)
+        print(finalMatrix)
 
-for i in range(1,128):
-    isPrime(i)
-    if i%4 == 3 and i not in primeNumbers:
-        print(i)
+        for i in range(length):
+            for j in range(length):
+                for k in range(length):
+                    finalMatrix[i][j] += matrix[i][k] * multiplier[k][j]
 
-for i in range(len(primeNumbers)):
-    possibleMultipleOf4 = primeNumbers[i]-9
-    possibleMultipleOf9 = primeNumbers[i]-4
-    if possibleMultipleOf4%4 == 0 or possibleMultipleOf9%9 == 0:
-        print(primeNumbers[i],True)
-    else:
-        print(primeNumbers[i],False)
+        return finalMatrix
+
+print(multiplyingMatrices([[1,2],[3,4]],[[5,6],[7,8]]))
