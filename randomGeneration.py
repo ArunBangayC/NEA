@@ -56,11 +56,11 @@ def addLettersAndChars(keyPressMilliseconds,interruptsOnKeyPress,longRandomNumbe
                         pass
             except:
                 pass
-    randomPassword = longRandomList[:36]
-    for i in range(len(randomPassword)):
-        randomPassword[i] = str(randomPassword[i])
-    randomPassword = ''.join(randomPassword)
-    return randomPassword
+    random = longRandomList[:36]
+    for i in range(len(random)):
+        random[i] = str(random[i])
+    random = ''.join(random)
+    return random
 
 def takingInputs():
     len36 = False
@@ -81,7 +81,7 @@ def takingInputs():
             #Stops the listener when enter is pressed
             if key == keyboard.Key.enter:
                 return False
-    
+        
         #Starts the listener
         with keyboard.Listener(on_press=onPress, on_release=onRelease) as listener:
             listener.join()
@@ -92,8 +92,8 @@ def takingInputs():
                 sumOfUnicodes += ord(key.char)
 
         productOfDigits = 1
-        for time in keyPressTimes:
-            last4Digits = time % 10000
+        for t in keyPressTimes:
+            last4Digits = t % 10000
             keyPressMilliseconds.append(last4Digits)
             productOfDigits *= last4Digits
 
@@ -105,8 +105,7 @@ def takingInputs():
 
         if len(str(longRandomNumber)) >= 36:
             len36 = True
-            random = addLettersAndChars(keyPressMilliseconds,interruptsOnKeyPress,longRandomNumber)
-            return random
+            return addLettersAndChars(keyPressMilliseconds,interruptsOnKeyPress,longRandomNumber)
         else:
             len36 = False
             print("You didn't type enough characters...  Try again!")

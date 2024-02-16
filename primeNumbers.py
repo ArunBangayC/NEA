@@ -17,6 +17,8 @@ def isPrime(n):
 
 for i in range(1,128):
     isPrime(i)
+    if i%4 == 3 and i not in primeNumbers:
+        print(i)
 
 for i in range(len(primeNumbers)):
     possibleMultipleOf4 = primeNumbers[i]-9

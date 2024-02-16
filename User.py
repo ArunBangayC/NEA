@@ -3,7 +3,7 @@ class User():
         self.__firstName = firstName
         self.__lastName = lastName
         self.__username = username
-        self.__hashedPassword = User.__hashFunction(password)
+        self.__hashedPassword = User
     
     def createNewUser(self,cursor):
         addUserToDatabase = """
