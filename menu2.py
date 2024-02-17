@@ -1,4 +1,3 @@
-from User import User
 import getpass
 strongPasswordInfomation = "I recommend a password that is at least 8 characters long with a mix of letters, numbers and special characters."
 
@@ -23,30 +22,23 @@ def addUsername():
     else:
         addUsername()
 
-    def addPassword():
-        password = getpass.getpass("\nPlease enter your password here:    ")
-        correctPassword = input("\nWould you like to submit this password? (Y): ")
-        if correctPassword.lower == "y":
-            return password
-        else:
-            addPassword()
+def addPassword():
+    password = getpass.getpass("\nPlease enter your password here:    ")
+    correctPassword = input("\nWould you like to submit this password? (Y): ")
+    if correctPassword.lower == "y":
+        return password
+    else:
+        addPassword()
 
 def logIn(cursor):
     username = input("\nPlease enter your username/email here:   ")
     password = getpass.getpass("\nPlease enter your password here:    ")
-    if User.loginUser(username,password,cursor) != False:
-        userInfo = User.loginUser(username,password,cursor)
-        passwordVault(userInfo,cursor)
+    if User.loginUser(username,password,cursor) == True:
+        True ############
     else:
         print("\nHmmmmmm, it looks like the information you entered is incorrect... Please try again.")
         logIn(cursor)
-    
-def retrieveInfo(userInfo,cursor):
-    selectAll = """
-    SELECT 
-    """
 
-############################################################################################
 
 def mainMenu(cursor):
     loginOrAdd = input("\nWould you like to login or add a new user? (L or A):  ")
@@ -55,16 +47,5 @@ def mainMenu(cursor):
     elif loginOrAdd.lower() == "a":
         addNewUser(cursor)
 
-def passwordVault(userInfo,cursor):
-    print("\nWelcome to Password Vault!  \nThis is a simple password manager that allows you to store, retrieve and generate your passwords.  \nEnjoy!")
-    def options():
-        RorA = input("\nWould you like to retrieve information, add new information or see all of your stored information? (R or A or S):  ")
-        if RorA.lower() == "r":
-            retrieveInfo(userInfo,cursor)
-        elif RorA.lower() == "a":
-            application = input("\nPlease enter the name of the application or website:  ")
-            username,password = addUsername()
-
-        else:
-            print("\nHmmmm, looks like you didn't enter an option... Try again.")
-            options()
+cursor = 0
+mainMenu(cursor)

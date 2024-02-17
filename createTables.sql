@@ -9,12 +9,27 @@ CREATE TABLE IF NOT EXISTS "Logins"(
     "masterHashedPassword" VARCHAR(255) NOT NULL
 );
 
+
+-- Creates table "Password Vault" to store user's encrypted passwords
 CREATE TABLE IF NOT EXISTS "Password Vault"(
-    "userID" INTEGER NOT NULL,
+    "userID" INTEGER,   
+    "itemID" INTEGER PRIMARY KEY AUTOINCREMENT,
     "itemName" VARCHAR(50) NOT NULL,
     "username" VARCHAR(50) NOT NULL,
     "encryptedPassword" VARCHAR(255) NOT NULL,
     FOREIGN KEY ("userID") REFERENCES "Users"("userID")
 );
 
-CREATE TABLE IF NOT EXISTS ""
+CREATE TABLE IF NOT EXISTS "KEKs"(
+    "itemID" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "kek" VARCHAR(255) NOT NULL,
+    FOREIGN KEY ("itemID") REFERENCES "Password Vault"("itemID")
+)
+
+#####
+CREATE TABLE IF NOT EXISTS "AccessLogs"( 
+    "userID" INTEGER NOT NULL,
+    "loginTime" DATETIME NOT NULL,
+    "logoutTime" DATETIME,
+    FOREIGN KEY ("userID") REFERENCES "Users"("userID")
+);

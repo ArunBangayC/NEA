@@ -1,5 +1,8 @@
+from menu import passwordVault
+
 class User():
-    def __init__(self,firstName,lastName,username,password):
+    def __init__(self,userID,firstName,lastName,username,password):
+        self.__userID = userID
         self.__firstName = firstName
         self.__lastName = lastName
         self.__username = username
@@ -8,9 +11,9 @@ class User():
     def createNewUser(self,cursor):
         addUserToDatabase = """
         INSERT INTO Users(firstName,lastName,masterUsername,masterHashedPassword)
-        VALUES (?,?,?,?)
+        VALUES (?,?,?,?,?)
         """
-        cursor.execute(addUserToDatabase,(self.__firstName,self.__lastName,self.__username,self.__hashedPassword))
+        cursor.execute(addUserToDatabase,(self.__userID,self.__firstName,self.__lastName,self.__username,self.__hashedPassword))
     
     def loginUser(username,password,cursor):
         checkUserInDatabase = """
@@ -23,11 +26,20 @@ class User():
         usernameAndPassword = cursor.fetchone()
         if usernameAndPassword[0] == username and usernameAndPassword[1] == password:
             print("\nYou have successfully logged in!")
-            
-            return True
+            grabUserInfo = """
+            SELECT userID,firstName,lastName
+            FROM Users
+            WHERE masterUsername = ? AND masterHashedPassword = ?
+            """
+            userInfo = cursor.execute(grabUserInfo,(username,password))
+            return userInfo
+
         else:
             print("\nHmmmmmm, it looks like the username or password you entered is incorrect... Please try again.")
             return False
+    
+    def addInformation():
+
 
     def __hashFunction(password):
         #sumOfPassword is the sum of all the squared unicode numerical codes from the password
