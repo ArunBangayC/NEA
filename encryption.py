@@ -8,38 +8,46 @@ def encryption(password, DEK, KEK):
             listOfUnicodes.append(ord(listOfParameter[i]))
         return listOfUnicodes
 
-    def matrixOperableList(parameter):
-        lengthOfParameter = len(parameter)
+    def matrixOperableLists(passwordList,DEKList):
+        print("passwordList:",passwordList)
+        lengthOfPL = len(passwordList)
+        print(DEKList)
         separatedList = []
-        if lengthOfParameter%4==0:
-            for i in range(0,len(parameter),4):
-                miniList = parameter[i:i+4]
+        
+        def separateIntoListOf2x2Matrices(list):
+            for i in range(0,lengthOfPL,4):
+                miniList = passwordList[i:i+4]
                 separatedList.append(miniList)
-        elif lengthOfParameter%4==2:
-            for i in range(0,len(parameter)-19,4):
-                miniList = parameter[i:i+4]
+        
+        def separateIntoListOf3x3Matrices(list):
+            for i in range(0,lengthOfPL,9):
+                miniList = passwordList[i:i+9]
                 separatedList.append(miniList)
-            separatedList.append(parameter[lengthOfParameter-18:lengthOfParameter])
-        elif lengthOfParameter%9==0:
-            for i in range(0,len(parameter),9):
-                miniList = parameter[i:i+9]
-                separatedList.append(miniList)
-        elif lengthOfParameter%4 == 3:
-            if (lengthOfParameter-9)%4 == 2:
-                for i in range(0,lengthOfParameter-14,4):
-                    miniList = parameter[i:i+4]
-                    separatedList.append(miniList)
-                separatedList.append(parameter[lengthOfParameter-13:lengthOfParameter-12])
-                for i in range(lengthOfParameter-11,lengthOfParameter-1,3):
-                    miniList = parameter[i:i+3]
-                    separatedList.append(miniList)
-            else:
-                for i in range(0,lengthOfParameter-11,4):
-                    miniList = parameter[i:i+4]
-                    print(miniList)
-                    separatedList.append(miniList)
-                separatedList.append(parameter[lengthOfParameter-10:lengthOfParameter-1])
-        return separatedList
+
+        def equalLength(passwordList,DEKList):
+            lengthOfPL = len(passwordList)
+            DEKList = DEKList[:lengthOfPL]
+            return DEKList
+
+        if lengthOfPL%4==0:
+            DEKList = equalLength(passwordList,DEKList)
+            passwordList = separateIntoListOf2x2Matrices(passwordList)
+            DEKList = separateIntoListOf2x2Matrices(DEKList)
+            return passwordList,DEKList
+        elif lengthOfPL%9==0:
+            DEKList = equalLength(passwordList,DEKList)
+            passwordList = separateIntoListOf3x3Matrices(passwordList)
+            DEKList = separateIntoListOf3x3Matrices(DEKList)
+            return passwordList,DEKList
+        else:
+            for i in range(1,8):
+                if (lengthOfPL+i)%9==0:
+                    extractOfKEKList = DEKList[lengthOfPL+i-9:lengthOfPL]
+            DEKList = equalLength(passwordList,DEKList)
+            passwordList.append(extractOfKEKList)
+            passwordList = separateIntoListOf3x3Matrices(passwordList)
+            DEKList = separateIntoListOf3x3Matrices(DEKList)
+            return passwordList,DEKList
     
     def multiplyingMatrices(matrix,multiplier):
         length = len(matrix)
@@ -80,17 +88,16 @@ def encryption(password, DEK, KEK):
     listOfPasswordCodes = listOfUnicodes(password)
     listOfDEKCodes = listOfUnicodes(DEK)
 
-    #Code to shorten the DEK to the length of the password
-    lengthOfPassword = len(listOfPasswordCodes)
-    listOfDEKCodes = listOfDEKCodes[:lengthOfPassword]
-
     XORpassword =[]
     for i in range(len(listOfPasswordCodes)):
         XORpassword.append(listOfPasswordCodes[i] ^ listOfDEKCodes[i])
     print("XOR password",XORpassword)
     
-    separatedPasswordList = matrixOperableList(XORpassword)
-    separatedDEKList = matrixOperableList(listOfDEKCodes)
+    separatedPasswordList = matrixOperableLists(XORpassword,listOfDEKCodes)
+
+    #Code to shorten the DEK to the length of the password
+    lengthOfPassword = len(separatedPasswordList)
+    separatedDEKList = separatedDEKList[:lengthOfPassword]
 
     for i in range(len(separatedPasswordList)):
         lengthOfList = len(separatedPasswordList[i])
@@ -108,7 +115,6 @@ def encryption(password, DEK, KEK):
         elif lengthOfList == 9 and is3x3MatrixSingular(separatedDEKList[i]) == True:
             if len(separatedDEKList[i-1]) == 9:
                 separatedPasswordList[i] = multiplyingMatrices(separatedPasswordList[i],separatedDEKList[i-1])
-
     return separatedPasswordList
 
 def keyGeneration(password):

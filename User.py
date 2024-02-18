@@ -39,7 +39,7 @@ class User():
             return False
     
     def addInformation():
-
+        pass
 
     def __hashFunction(password):
         #sumOfPassword is the sum of all the squared unicode numerical codes from the password
