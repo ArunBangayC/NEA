@@ -9,42 +9,46 @@ def encryption(password, DEK, KEK):
         return listOfUnicodes
 
     def matrixOperableLists(passwordList,DEKList):
-        print("passwordList:",passwordList)
-        lengthOfPL = len(passwordList)
-        print(DEKList)
-        separatedList = []
+        originalLengthOfPL = len(passwordList)
         
         def separateIntoListOf2x2Matrices(list):
-            for i in range(0,lengthOfPL,4):
-                miniList = passwordList[i:i+4]
+            separatedList = []
+            for i in range(0,len(list),4):
+                miniList = list[i:i+4]
                 separatedList.append(miniList)
+            for i in range(len(separatedList)):
+                separatedList[i] = [separatedList[i][:2],separatedList[i][2:]]
+            return separatedList
         
         def separateIntoListOf3x3Matrices(list):
-            for i in range(0,lengthOfPL,9):
-                miniList = passwordList[i:i+9]
+            separatedList = []
+            for i in range(0,len(list),9):
+                miniList = list[i:i+9]
                 separatedList.append(miniList)
+            for i in range(len(separatedList)):
+                separatedList[i] = [separatedList[i][:3],separatedList[i][3:6],separatedList[i][6:9]]
+            return separatedList
 
-        def equalLength(passwordList,DEKList):
-            lengthOfPL = len(passwordList)
-            DEKList = DEKList[:lengthOfPL]
+        def equalLength(DEKList):
+            DEKList = DEKList[:newLengthOfPL]
             return DEKList
 
-        if lengthOfPL%4==0:
-            DEKList = equalLength(passwordList,DEKList)
+        if originalLengthOfPL%4==0:
+            DEKList = equalLength(DEKList)
             passwordList = separateIntoListOf2x2Matrices(passwordList)
             DEKList = separateIntoListOf2x2Matrices(DEKList)
             return passwordList,DEKList
-        elif lengthOfPL%9==0:
-            DEKList = equalLength(passwordList,DEKList)
+        elif originalLengthOfPL%9==0:
+            DEKList = equalLength(DEKList)
             passwordList = separateIntoListOf3x3Matrices(passwordList)
             DEKList = separateIntoListOf3x3Matrices(DEKList)
             return passwordList,DEKList
         else:
-            for i in range(1,8):
-                if (lengthOfPL+i)%9==0:
-                    extractOfKEKList = DEKList[lengthOfPL+i-9:lengthOfPL]
-            DEKList = equalLength(passwordList,DEKList)
-            passwordList.append(extractOfKEKList)
+            nextMultipleOf9 = originalLengthOfPL + (9 - originalLengthOfPL%9)
+            extractOfDEKList = DEKList[originalLengthOfPL:nextMultipleOf9]
+            passwordList += extractOfDEKList
+            newLengthOfPL = len(passwordList)
+            DEKList = equalLength(DEKList)
             passwordList = separateIntoListOf3x3Matrices(passwordList)
             DEKList = separateIntoListOf3x3Matrices(DEKList)
             return passwordList,DEKList
@@ -58,7 +62,6 @@ def encryption(password, DEK, KEK):
             for j in range(length):
                 row.append(0)
             finalMatrix.append(row)
-        print("finalMatrix:",finalMatrix)
 
         for i in range(length):
             for j in range(length):
@@ -93,28 +96,27 @@ def encryption(password, DEK, KEK):
         XORpassword.append(listOfPasswordCodes[i] ^ listOfDEKCodes[i])
     print("XOR password",XORpassword)
     
-    separatedPasswordList = matrixOperableLists(XORpassword,listOfDEKCodes)
-
-    #Code to shorten the DEK to the length of the password
-    lengthOfPassword = len(separatedPasswordList)
-    separatedDEKList = separatedDEKList[:lengthOfPassword]
+    separatedPasswordList,separatedDEKList = matrixOperableLists(XORpassword,listOfDEKCodes)
+    print("separatedPasswordList:",separatedPasswordList)
+    print("separatedDEKList:",separatedDEKList)
 
     for i in range(len(separatedPasswordList)):
         lengthOfList = len(separatedPasswordList[i])
-        print(lengthOfList)
-        if lengthOfList == 4 and is2x2MatrixSingular(separatedDEKList[i]) == False:
-            separatedPasswordList[i] = multiplyingMatrices(separatedDEKList[i],separatedDEKList[i])
-        elif lengthOfList == 9 and is3x3MatrixSingular(separatedDEKList[i]) == False:
-            separatedPasswordList[i] = multiplyingMatrices(separatedDEKList[i],separatedDEKList[i])
-        elif lengthOfList == 4 and is2x2MatrixSingular(separatedDEKList[i]) == True:
-            #The way I have designed how my program means that if the length of the matrix is a 2x2 matrix, any elements before is also a 2x2 matrix
-            try:
-                separatedPasswordList[i] = multiplyingMatrices(separatedPasswordList[i],separatedDEKList[i-1])
-            except:
-                return False
-        elif lengthOfList == 9 and is3x3MatrixSingular(separatedDEKList[i]) == True:
-            if len(separatedDEKList[i-1]) == 9:
-                separatedPasswordList[i] = multiplyingMatrices(separatedPasswordList[i],separatedDEKList[i-1])
+        if lengthOfList == 4:
+            if is2x2MatrixSingular(separatedDEKList[i]) == False:
+                separatedPasswordList[i] = multiplyingMatrices(separatedPasswordList[i],separatedDEKList[i])
+            else:
+                #The way I have designed how my program means that if the length of the matrix is a 2x2 matrix, any elements before is also a 2x2 matrix
+                try:
+                    separatedPasswordList[i] = multiplyingMatrices(separatedPasswordList[i],separatedDEKList[i-1])
+                except:
+                    return False
+        elif lengthOfList == 9:
+            if is3x3MatrixSingular(separatedDEKList[i]) == False:
+                separatedPasswordList[i] = multiplyingMatrices(separatedPasswordList[i],separatedDEKList[i])
+            else:
+                if len(separatedDEKList[i-1]) == 9:
+                    separatedPasswordList[i] = multiplyingMatrices(separatedPasswordList[i],separatedDEKList[i-1])
     return separatedPasswordList
 
 def keyGeneration(password):
@@ -122,7 +124,7 @@ def keyGeneration(password):
     DEK = takingInputs(False)
     print("Please randomly type on the keyboard again: ")
     KEK = takingInputs(False)
-    print(encryption(password,DEK,KEK))
+    print("final: ",encryption(password,DEK,KEK))
 
-password = "Password1234"
+password = "Password123"
 keyGeneration(password)

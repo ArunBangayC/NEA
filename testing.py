@@ -1,24 +1,11 @@
-def matrixOperableLists(passwordList,dEKList):
-    lengthOfPL = len(passwordList)
-    separatedList = []
+def multiplyingMatrices(matrix, multiplier):
+    for i in range(len(matrix)):
+        for j in range(len(matrix)):
+            for k in range(len(matrix)):
+                for l in range(len(matrix)):
+                    matrix[i][k][l] = matrix[i][k][l] * multiplier[i][j][l]
+    return matrix
+matrix = [[[106, 20, 48], [51, 66, 30], [70, 93, 65]], [[4, 79, 57], [48, 52, 44], [55, 69, 49]]]
+multiplier = [[[58, 117, 67], [64, 53, 113], [52, 57, 112]], [[54, 124, 57], [48, 52, 44], [55, 69, 49]]]
 
-    def separateIntoListOf2x2Matrices(list):
-        for i in range(0,len(passwordList),4):
-            miniList = passwordList[i:i+4]
-            separatedList.append(miniList)
-    
-    def separateIntoListOf3x3Matrices(list):
-        for i in range(0,len(passwordList),9):
-            miniList = passwordList[i:i+9]
-            separatedList.append(miniList)
-
-    if lengthOfPL%4==0:
-        separateIntoListOf2x2Matrices(passwordList)
-    elif lengthOfPL%9==0:
-        separateIntoListOf3x3Matrices(passwordList)
-    else:
-        for i in range(1,8):
-            if (lengthOfPL+i)%9==0:
-                extractOfKEKList = dEKList[lengthOfPL+i-9:lengthOfPL]
-            passwordList.append(extractOfKEKList)
-            separateIntoListOf3x3Matrices(passwordList)
+print(multiplyingMatrices(matrix, multiplier))
