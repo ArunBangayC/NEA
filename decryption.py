@@ -1,5 +1,20 @@
+from encryption import listOfUnicodes
+from encryption import separateIntoListOf2x2Matrices
+from encryption import separateIntoListOf3x3Matrices
+
 def determinantOf2x2Matrix(matrix):
-    return int((matrix[0][0]*matrix[1][1]) - (matrix[0][1]*matrix[1][0]))
+    return (matrix[0][0]*matrix[1][1]) - (matrix[0][1]*matrix[1][0])
+
+def inverseOf2x2Matrix(matrix):
+    #matrix is given as [[a,b],[c,d]]
+    inverseMatrix = [[0,0],[0,0]]
+    determinant = determinantOf2x2Matrix(matrix)
+    reciprocalOfDeterminant = 1/determinant
+    adjugateOfMatrix = [[matrix[1][1],(-1*matrix[0][1])][(-1*matrix[1][0],matrix[0][0])]]
+    for i in range(len(adjugateOfMatrix)):
+        for j in range(len(adjugateOfMatrix[i]))
+            inverseMatrix[i][j] += (reciprocalOfDeterminant*adjugateOfMatrix)
+    return inverseMatrix
 
 def inverseOf3x3Matrix(matrix):
     #matrix is given as [[a,b,c],[d,e,f],[g,h,i]]
@@ -38,4 +53,14 @@ def inverseOf3x3Matrix(matrix):
             inverseMatrix[i][j] *= reciprocalOfDeterminant
     return inverseMatrix
 
-print(inverseOf3x3Matrix([[2,2,0],[1,4,-2],[2,1,1]]))
+def keyToMatrix(key):
+    key = listOfUnicodes(key)
+    if len(key)%4 == 0:
+        matrixKey = separateIntoListOf2x2Matrices(key)
+        return matrixKey
+    elif len(key)%9 == 0:
+        matrixKey = separateIntoListOf3x3Matrices(key)
+        return matrixKey
+
+def decryption(ciphertext,key):
+    
