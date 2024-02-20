@@ -28,17 +28,17 @@ def separateIntoListOf3x3Matrices(list):
 def matrixOperableLists(textList,keyList):
     originalLengthOfPL = len(textList)
 
-    def equalLength(keyList):
-        keyList = keyList[:newLengthOfPL]
+    def equalLength(keyList,lengthOfPL):
+        keyList = keyList[:lengthOfPL]
         return keyList
 
     if originalLengthOfPL%4==0:
-        keyList = equalLength(keyList)
+        keyList = equalLength(keyList,originalLengthOfPL)
         textList = separateIntoListOf2x2Matrices(textList)
         keyList = separateIntoListOf2x2Matrices(keyList)
         return textList,keyList
     elif originalLengthOfPL%9==0:
-        keyList = equalLength(keyList)
+        keyList = equalLength(keyList,originalLengthOfPL)
         textList = separateIntoListOf3x3Matrices(textList)
         keyList = separateIntoListOf3x3Matrices(keyList)
         return textList,keyList
@@ -47,7 +47,7 @@ def matrixOperableLists(textList,keyList):
         extractOfkeyList = keyList[originalLengthOfPL:nextMultipleOf9]
         textList += extractOfkeyList
         newLengthOfPL = len(textList)
-        keyList = equalLength(keyList)
+        keyList = equalLength(keyList,newLengthOfPL)
         textList = separateIntoListOf3x3Matrices(textList)
         keyList = separateIntoListOf3x3Matrices(keyList)
         return textList,keyList
@@ -120,7 +120,5 @@ def keyGeneration(password):
     print("Please randomly type on the keyboard again: ")
     KEK = takingInputs(False)
     encryptedPassword = encryption(password,DEK)
-    encryptedDEK = encryption(password,DEK)
-
-password = "Password123"
-keyGeneration(password)
+    encryptedDEK = encryption(DEK,KEK)
+    return encryptedPassword,encryptedDEK

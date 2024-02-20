@@ -110,5 +110,3 @@ def takingInputs(len36):
     longRandomNumber = (productOfDigits*sumOfUnicodes*sumOfInterrupts)
 
     return addLettersAndChars(keyPressMilliseconds,interruptsOnKeyPress,longRandomNumber,len36)
-        
-print(takingInputs(False))

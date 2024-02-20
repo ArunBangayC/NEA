@@ -1,6 +1,4 @@
-from encryption import listOfUnicodes
-from encryption import separateIntoListOf2x2Matrices
-from encryption import separateIntoListOf3x3Matrices
+from encryption import listOfUnicodes, separateIntoListOf2x2Matrices, separateIntoListOf3x3Matrices, XORList
 
 def determinantOf2x2Matrix(matrix):
     return (matrix[0][0]*matrix[1][1]) - (matrix[0][1]*matrix[1][0])
@@ -10,22 +8,17 @@ def inverseOf2x2Matrix(matrix):
     inverseMatrix = [[0,0],[0,0]]
     determinant = determinantOf2x2Matrix(matrix)
     reciprocalOfDeterminant = 1/determinant
-    adjugateOfMatrix = [[matrix[1][1],(-1*matrix[0][1])][(-1*matrix[1][0],matrix[0][0])]]
+    adjugateOfMatrix = [[matrix[1][1],(-1*matrix[0][1])],[(-1*matrix[1][0],matrix[0][0])]]
     for i in range(len(adjugateOfMatrix)):
-        for j in range(len(adjugateOfMatrix[i]))
+        for j in range(len(adjugateOfMatrix[i])):
             inverseMatrix[i][j] += (reciprocalOfDeterminant*adjugateOfMatrix)
     return inverseMatrix
 
 def inverseOf3x3Matrix(matrix):
     #matrix is given as [[a,b,c],[d,e,f],[g,h,i]]
     inverseMatrix = [[0,0,0],[0,0,0],[0,0,0]]
-    print("a",matrix[0][0]*determinantOf2x2Matrix([[matrix[1][1],matrix[1][2]],[matrix[2][1],matrix[2][2]]]))
-    print("b",matrix[1][0]*determinantOf2x2Matrix([[matrix[0][1],matrix[0][2]],[matrix[2][1],matrix[2][2]]]))
-    print("c",matrix[2][0]*determinantOf2x2Matrix([[matrix[1][1],matrix[1][2]],[matrix[2][1],matrix[2][2]]]))
     determinant = (matrix[0][0]*determinantOf2x2Matrix([[matrix[1][1],matrix[1][2]],[matrix[2][1],matrix[2][2]]]))-(matrix[1][0]*determinantOf2x2Matrix([[matrix[0][1],matrix[0][2]],[matrix[2][1],matrix[2][2]]]))+(matrix[2][0]*determinantOf2x2Matrix([[matrix[0][1],matrix[0][2]],[matrix[1][1],matrix[1][2]]]))
-    print("determinant: ",determinant)
     reciprocalOfDeterminant = 1/determinant
-    print("reciprocal of determinant: ",reciprocalOfDeterminant)
     for i in range(len(matrix)):
         for j in range(len(matrix[i])):
             listOfRemainingRows = [0,1,2]
@@ -63,4 +56,19 @@ def keyToMatrix(key):
         return matrixKey
 
 def decryption(ciphertext,key):
-    
+    keyMatrix = keyToMatrix(key)
+    inverseKey = []
+    for i in range(len(ciphertext)):
+        if len(ciphertext) == 0:
+            inverseKey.append(inverseOf2x2Matrix(keyMatrix[i]))
+        else:
+            inverseKey.append(inverseOf3x3Matrix(keyMatrix[i]))
+
+    XORciphertext = XORList(ciphertext,keyMatrix)
+    ciphertext = []
+    for i in range(len(XORciphertext)):
+        XORciphertext[i] = chr(XORciphertext[i])
+    ciphertext = ''.join(XORciphertext)
+    return ciphertext
+
+print(decryption([[3.0, -1.0, -2.0], [-2.5, 1.0, 2.0], [-3.5, 1.0, 3.0]],"djwaiodjawjdioawdj")) 
