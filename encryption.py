@@ -25,7 +25,7 @@ def separateIntoListOf3x3Matrices(list):
         separatedList[i] = [separatedList[i][:3],separatedList[i][3:6],separatedList[i][6:9]]
     return separatedList
 
-def matrixOperableLists(textList,keyList):
+def matrixOperableLists(textList,keyList,padded):
     originalLengthOfT = len(textList)
 
     def equalLength(keyList,lengthOfT):
@@ -43,6 +43,7 @@ def matrixOperableLists(textList,keyList):
         keyList = separateIntoListOf3x3Matrices(keyList)
         return textList,keyList
     else:
+        padded = True
         nextMultipleOf9 = originalLengthOfT + (9 - originalLengthOfT%9)
         extractOfkeyList = keyList[originalLengthOfT:nextMultipleOf9]
         textList += extractOfkeyList
@@ -77,7 +78,7 @@ def is2x2MatrixSingular(matrix):
         return True
     else:
         return False
-
+padded = False
 def is3x3MatrixSingular(matrix):
     #matrix is in form [[a,b,c],[d,e,f],[g,h,i]]
     determinant = (matrix[0][0]*((matrix[1][1]*matrix[2][2])-(matrix[1][2]*matrix[2][1]))) - (matrix[0][1]*((matrix[1][0]*matrix[2][2])-(matrix[1][2]*matrix[2][0]))) + (matrix[0][2]*((matrix[1][0]*matrix[2][1])-(matrix[1][1]*matrix[2][0])))
@@ -92,13 +93,13 @@ def XORList(list,key):
         XORtext.append(list[i] ^ key[i])
     return XORtext
 
-def encryption(plaintext, key):
+def encryption(plaintext,key,padded):
     listOfPlaintextCodes = listOfUnicodes(plaintext)
     listOfKeyCodes = listOfUnicodes(key)
     
     XORPlaintextCodes = XORList(listOfPlaintextCodes,listOfKeyCodes)
 
-    separatedPlaintextList,separatedKeyList = matrixOperableLists(XORPlaintextCodes,listOfKeyCodes)
+    separatedPlaintextList,separatedKeyList = matrixOperableLists(XORPlaintextCodes,listOfKeyCodes,padded)
 
     for i in range(len(separatedPlaintextList)):
         lengthOfList = len(separatedPlaintextList[i])
@@ -112,23 +113,16 @@ def encryption(plaintext, key):
                 separatedPlaintextList[i] = multiplyingMatrices(separatedPlaintextList[i],separatedKeyList[i])
             else:
                 keyGeneration(plaintext)
-    return separatedPlaintextList,separatedKeyList
+    return separatedPlaintextList,padded
 
 def keyGeneration(password):
+    originalLengthOfPassword = len(password)
     print("Please randomly type on the keyboard: ")
     DEK = takingInputs(False)
     print("Please randomly type on the keyboard again: ")
     KEK = takingInputs(False)
-    encryptedPassword,DEKList = encryption(password,DEK)
-    print("encryptedPassword: ",encryptedPassword)
-    print("DEK: ",DEK)
-    '''
-    encryptedPassword = encryption(password,DEK)
-    encryptedDEK = encryption(DEK,KEK)
-    print("encryptedPassword: ",encryptedPassword)
-    print("DEK: ",DEK)
-    return encryptedPassword,encryptedDEK
-
-
-print(keyGeneration("password"))
-'''
+    paddedPassword = False
+    encryptedPassword,padded = encryption(password,DEK,paddedPassword)
+    paddedDEK = False
+    encryptedDEK,pad = encryption(DEK,KEK,paddedDEK)
+    return encryptedPassword,encryptedDEK,KEK,originalLengthOfPassword,paddedPassword,paddedDEK

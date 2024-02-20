@@ -1,4 +1,4 @@
--- Creates primary table "Users"
+-- Creates primary table "Logins"
 -- Longest recorded full name is 49 characters, so VARCHAR(50) for first or last name will be more than sufficient.
 
 CREATE TABLE IF NOT EXISTS "Logins"(
@@ -17,19 +17,22 @@ CREATE TABLE IF NOT EXISTS "Password Vault"(
     "itemName" VARCHAR(50) NOT NULL,
     "username" VARCHAR(50) NOT NULL,
     "encryptedPassword" VARCHAR(255) NOT NULL,
+    "encryptedDEK" VARCHAR(255) NOT NULL,
+    "originalLengthOfPassword" INTEGER NOT NULL,
+    "padded" BOOLEAN NOT NULL,
     FOREIGN KEY ("userID") REFERENCES "Users"("userID")
 );
 
 CREATE TABLE IF NOT EXISTS "KEKs"(
     "itemID" INTEGER PRIMARY KEY AUTOINCREMENT,
-    "kek" VARCHAR(255) NOT NULL,
+    "KEK" VARCHAR(255) NOT NULL,
+    "padded" BOOLEAN NOT NULL,
     FOREIGN KEY ("itemID") REFERENCES "Password Vault"("itemID")
-)
+);
 
-#####
-CREATE TABLE IF NOT EXISTS "AccessLogs"( 
+CREATE TABLE IF NOT EXISTS "Access Logs"( 
     "userID" INTEGER NOT NULL,
     "loginTime" DATETIME NOT NULL,
     "logoutTime" DATETIME,
     FOREIGN KEY ("userID") REFERENCES "Users"("userID")
-);
+)
