@@ -19,35 +19,42 @@ class User():
             return False
         
     def addItem(self,itemName,username,password,cursor):
-        try:
-            userID = self.userID(cursor)
-            encryptedPassword,encryptedDEK,KEK,originalLengthOfPassword,paddedPassword,paddedDEK = keyGeneration(password)
-            addItem = """
-            INSERT INTO "Password Vault"(userID,itemName,username,encryptedPassword,originalLengthOfPassword,paddedd)
-            VALUES (?,?,?,?,?,?)"""
-            cursor.execute(addItem,(userID,itemName,username,encryptedPassword,originalLengthOfPassword,padded))
-            print("\nYou have successfully added a new item!")
+        userID = self.userID(cursor)
+        encryptedPassword,encryptedDEK,KEK,originalLengthOfPassword,paddedPassword,paddedDEK = keyGeneration(password)
+        addItemToPasswordVault = """
+        INSERT INTO "Password Vault"(userID,itemName,username,encryptedPassword,encryptedDEK,originalLengthOfPassword,padded)
+        VALUES (?,?,?,?,?,?)"""
+        cursor.execute(addItemToPasswordVault,(userID,itemName,username,encryptedPassword,encryptedDEK,originalLengthOfPassword,paddedPassword))
+        itemID = self.itemID(cursor)
+        addItemToKEKs = """
+        INSERT INTO "KEKs"(itemID,KEK,padded)
+        VALUES (?,?,?)"""
+        cursor.execute(addItemToKEKs,(itemID,KEK,paddedDEK))
+        print("\nYou have successfully added a new item!")
+        '''
         except:
             print("\nIt looks like we couldn't add your item... Please try again.")
             return False
+            '''
 
-    def loginUser(username,password,cursor):
+    @staticmethod
+    def loginUser(username, password, cursor):
         checkUserInDatabase = """
-        SELECT masterUsername,masterHashedPassword
+        SELECT masterUsername, masterHashedPassword
         FROM Logins
         WHERE masterUsername = ? AND masterHashedPassword = ?
         """
-        password = User.__hashFunction(password)
-        cursor.execute(checkUserInDatabase,(username,password))
+        hashedPassword = User.__hashFunction(password)
+        cursor.execute(checkUserInDatabase, (username, hashedPassword))
         usernameAndPassword = cursor.fetchone()
-        if usernameAndPassword[0] == username and usernameAndPassword[1] == password:
+        if usernameAndPassword[0] == username and usernameAndPassword[1] == hashedPassword:
             print("\nYou have successfully logged in!")
             grabUserInfo = """
-            SELECT userID,firstName,lastName
+            SELECT userID, firstName, lastName
             FROM Logins
             WHERE masterUsername = ? AND masterHashedPassword = ?
             """
-            userInfo = cursor.execute(grabUserInfo,(username,password))
+            userInfo = cursor.execute(grabUserInfo, (username, hashedPassword))
             return userInfo
         else:
             print("\nHmmmmmm, it looks like the username or password you entered is incorrect... Please try again.")
@@ -58,7 +65,14 @@ class User():
             SELECT userID
             FROM Logins
             WHERE masterUsername = ?"""
-        return cursor.execute(getUserID,(self.__username))
+        return cursor.execute(getUserID,(self.__username,))
+    
+    def itemID(self,cursor):
+        getItemID = """
+            SELECT itemID
+            FROM "Password Vault"
+            WHERE userID = ?"""
+        return cursor.execute(getItemID,(self.userID(cursor),))
 
     @staticmethod
     def __hashFunction(password):

@@ -11,14 +11,14 @@ def addUsername():
         if correctPassword.lower() == "y":
             return password
         else:
-            addPassword()
+            return addPassword()
     username = input("\nPlease enter your username/email here:   ")
     correctUsername = input("\nIs this the correct username? (Y):  ")
     if correctUsername.lower() == "y":
         password = addPassword()
         return username,password
     else:
-        addUsername()
+        return addUsername()
 
 def addNewUser(conn,cursor):
     fullName = (input("\nPlease enter your first and last name here:  ")).split()
@@ -34,23 +34,22 @@ def addNewUser(conn,cursor):
         print("\nOops, looks like you didn't enter your full name...")
         addNewUser(conn,cursor)
 
-def logIn(cursor):
+def logIn(conn,cursor):
     username = input("\nPlease enter your username/email here:   ")
     password = getpass.getpass("\nPlease enter your password here:    ")
-    currentUser = User(username,password)
-    if currentUser.loginUser(username,password,cursor) != False:
-        currentUser = currentUser.loginUser(username,password,cursor)
-        passwordVault(currentUser,cursor)
+    currentUser = User(username, password)
+    if currentUser.loginUser(username, password, cursor) != False:
+        passwordVault(currentUser, conn, cursor)
     else:
         print("\nHmmmmmm, it looks like the information you entered is incorrect... Please try again.")
-        logIn(cursor)
+        logIn(conn,cursor)
 
 ############################################################################################
 
 def mainMenu(conn,cursor):
     loginOrAdd = input("\nWould you like to login or add a new user? (L or A):  ")
     if loginOrAdd.lower() == "l":
-        logIn(cursor)
+        logIn(conn,cursor)
     elif loginOrAdd.lower() == "a":
         addNewUser(conn,cursor)
 
