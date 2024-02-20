@@ -1,41 +1,26 @@
-def determinantOf2x2Matrix(matrix):
-    return int((matrix[0][0]*matrix[1][1]) - (matrix[0][1]*matrix[1][0]))
+import curses
 
-def inverseOf3x3Matrix(matrix):
-    #matrix is given as [[a,b,c],[d,e,f],[g,h,i]]
-    inverseMatrix = [[0,0,0],[0,0,0],[0,0,0]]
-    print("a",matrix[0][0]*determinantOf2x2Matrix([[matrix[1][1],matrix[1][2]],[matrix[2][1],matrix[2][2]]]))
-    print("b",matrix[1][0]*determinantOf2x2Matrix([[matrix[0][1],matrix[0][2]],[matrix[2][1],matrix[2][2]]]))
-    print("c",matrix[2][0]*determinantOf2x2Matrix([[matrix[1][1],matrix[1][2]],[matrix[2][1],matrix[2][2]]]))
-    determinant = (matrix[0][0]*determinantOf2x2Matrix([[matrix[1][1],matrix[1][2]],[matrix[2][1],matrix[2][2]]]))-(matrix[1][0]*determinantOf2x2Matrix([[matrix[0][1],matrix[0][2]],[matrix[2][1],matrix[2][2]]]))+(matrix[2][0]*determinantOf2x2Matrix([[matrix[0][1],matrix[0][2]],[matrix[1][1],matrix[1][2]]]))
-    print("determinant: ",determinant)
-    reciprocalOfDeterminant = 1/determinant
-    print("reciprocal of determinant: ",reciprocalOfDeterminant)
-    for i in range(len(matrix)):
-        for j in range(len(matrix[i])):
-            listOfRemainingRows = [0,1,2]
-            listOfRemainingElements = [0,1,2]
-            listOfRemainingRows.remove(i)
-            listOfRemainingElements.remove(j)
-            inverseMatrix[i][j] = determinantOf2x2Matrix([[matrix[listOfRemainingRows[0]][listOfRemainingElements[0]], matrix[listOfRemainingRows[0]][listOfRemainingElements[1]]], [matrix[listOfRemainingRows[1]][listOfRemainingElements[0]], matrix[listOfRemainingRows[1]][listOfRemainingElements[1]]]])
-    for i in range(len(inverseMatrix)):
-        if i != 1:
-            inverseMatrix[i][1] *= -1
-        else:
-            inverseMatrix[i][0] *= -1
-            inverseMatrix[i][2] *= -1
-    
-    def transposeMatrix(matrix):
-        matrix[0][1],matrix[1][0] = matrix[1][0],matrix[0][1]
-        matrix[0][2],matrix[2][0] = matrix[2][0],matrix[0][2]
-        matrix[1][2],matrix[2][1] = matrix[2][1],matrix[1][2]
-        return matrix
-    
-    inverseMatrix = transposeMatrix(inverseMatrix)
+def main(stdscr):
+    # Turn off cursor blinking
+    curses.curs_set(0)
 
-    for i in range(len(inverseMatrix)):
-        for j in range(len(inverseMatrix)):
-            inverseMatrix[i][j] *= reciprocalOfDeterminant
-    return inverseMatrix
+    # Colors for the interface
+    curses.start_color()
+    curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
+    highlight = curses.color_pair(1)
 
-print(inverseOf3x3Matrix([[2,2,0],[1,4,-2],[2,1,1]]))
+    # Clear screen
+    stdscr.clear()
+    stdscr.refresh()
+
+    # Add a button
+    stdscr.addstr(5, 10, "Press q to quit", highlight)
+    stdscr.addstr(5, 10, "Press b to start", highlight)
+
+    # Wait for user input
+    while True:
+        key = stdscr.getch()
+        if key == ord("q"):
+            break
+
+curses.wrapper(main)
