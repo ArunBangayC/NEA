@@ -23,8 +23,9 @@ class User():
         encryptedPassword,encryptedDEK,KEK,originalLengthOfPassword,paddedPassword,paddedDEK = keyGeneration(password)
         addItemToPasswordVault = """
         INSERT INTO "Password Vault"(userID,itemName,username,encryptedPassword,encryptedDEK,originalLengthOfPassword,padded)
-        VALUES (?,?,?,?,?,?)"""
+        VALUES (?,?,?,?,?,?,?)"""
         cursor.execute(addItemToPasswordVault,(userID,itemName,username,encryptedPassword,encryptedDEK,originalLengthOfPassword,paddedPassword))
+        #      return encryptedPassword,encryptedDEK,KEK,originalLengthOfPassword,paddedPassword,paddedDEK
         itemID = self.itemID(cursor)
         addItemToKEKs = """
         INSERT INTO "KEKs"(itemID,KEK,padded)
@@ -47,16 +48,20 @@ class User():
         hashedPassword = User.__hashFunction(password)
         cursor.execute(checkUserInDatabase, (username, hashedPassword))
         usernameAndPassword = cursor.fetchone()
-        if usernameAndPassword[0] == username and usernameAndPassword[1] == hashedPassword:
-            print("\nYou have successfully logged in!")
-            grabUserInfo = """
-            SELECT userID, firstName, lastName
-            FROM Logins
-            WHERE masterUsername = ? AND masterHashedPassword = ?
-            """
-            userInfo = cursor.execute(grabUserInfo, (username, hashedPassword))
-            return userInfo
-        else:
+        try:
+            if usernameAndPassword[0] == username and usernameAndPassword[1] == hashedPassword:
+                print("\nYou have successfully logged in!")
+                grabUserInfo = """
+                SELECT userID, firstName, lastName
+                FROM Logins
+                WHERE masterUsername = ? AND masterHashedPassword = ?
+                """
+                userInfo = cursor.execute(grabUserInfo, (username, hashedPassword))
+                return userInfo
+            else:
+                print("\nHmmmmmm, it looks like the username or password you entered is incorrect... Please try again.")
+                return False
+        except:
             print("\nHmmmmmm, it looks like the username or password you entered is incorrect... Please try again.")
             return False
 

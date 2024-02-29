@@ -122,7 +122,7 @@ def keyGeneration(password):
     print("Please randomly type on the keyboard again: ")
     KEK = takingInputs(False)
     paddedPassword = False
-    encryptedPassword,padded = encryption(password,DEK,paddedPassword)
+    encryptedPassword,paddedPassword = encryption(password,DEK,paddedPassword)
     paddedDEK = False
-    encryptedDEK,pad = encryption(DEK,KEK,paddedDEK)
+    encryptedDEK,paddedDEK = encryption(DEK,KEK,paddedDEK)
     return encryptedPassword,encryptedDEK,KEK,originalLengthOfPassword,paddedPassword,paddedDEK

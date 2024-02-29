@@ -37,9 +37,10 @@ def addNewUser(conn,cursor):
 def logIn(conn,cursor):
     username = input("\nPlease enter your username/email here:   ")
     password = getpass.getpass("\nPlease enter your password here:    ")
-    currentUser = User(username, password)
-    if currentUser.loginUser(username, password, cursor) != False:
-        passwordVault(currentUser, conn, cursor)
+    if len(username) > 0 and len(password) > 0:
+        currentUser = User(username, password)
+        if currentUser.loginUser(username, password, cursor) != False:
+            passwordVault(currentUser, conn, cursor)
     else:
         print("\nHmmmmmm, it looks like the information you entered is incorrect... Please try again.")
         logIn(conn,cursor)

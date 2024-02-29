@@ -91,6 +91,5 @@ def decryption(ciphertext,key):
     for i in range(len(XORciphertext)):
         XORciphertext[i] = chr(XORciphertext[i])
     ciphertext = ''.join(XORciphertext)
-    return ciphertext
 
 print(decryption([[[48, 18], [73, 36]], [[70, 91], [64, 2]]],"@s:W142f8-26|YO&7e01020E163\89]81mo309an80rOA9|b2O3O302>\51789625462709646504122308875126078951622392920510153359360000000"))
