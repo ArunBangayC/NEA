@@ -88,7 +88,7 @@ def is3x3MatrixSingular(matrix):
         return False
     
 def XORList(list,key):
-    XORtext =[]
+    XORtext = []
     for i in range(len(list)):
         XORtext.append(list[i] ^ key[i])
     return XORtext
@@ -124,5 +124,5 @@ def keyGeneration(password):
     paddedPassword = False
     encryptedPassword,paddedPassword = encryption(password,DEK,paddedPassword)
     paddedDEK = False
-    encryptedDEK,paddedDEK = encryption(DEK,KEK,paddedDEK)
+    encryptedDEK, paddedDEK = encryption(DEK, KEK, paddedDEK)
     return encryptedPassword,encryptedDEK,KEK,originalLengthOfPassword,paddedPassword,paddedDEK

@@ -1,3 +1,5 @@
-from encryption import takingInputs
+from encryption import keyGeneration
 
-print(takingInputs(False))
+encryptedPassword,encryptedDEK,KEK,originalLengthOfPassword,paddedPassword,paddedDEK = keyGeneration("Password123")
+
+print(encryptedPassword)
