@@ -87,6 +87,7 @@ def takingInputs(len36):
         #Stops the listener when enter is pressed
         if key == keyboard.Key.enter:
             return False
+
         
     #Starts the listener
     with keyboard.Listener(on_press=onPress, on_release=onRelease) as listener:

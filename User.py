@@ -17,7 +17,7 @@ class User():
         except:
             print("\nIt looks like we couldn't find your passwords... Please try again.")
             return False
-        
+            
     def addItem(self,itemName,username,password,cursor):
         userID = self.userID(cursor)
         encryptedPassword,encryptedDEK,KEK,originalLengthOfPassword,paddedPassword,paddedDEK = keyGeneration(password)
