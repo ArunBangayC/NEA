@@ -1,20 +1,20 @@
 from randomGeneration import takingInputs
 
 def listOfUnicodes(parameter):
-        listOfParameter = list(parameter)
-        listOfUnicodes = []
-        for i in range(len(listOfParameter)):
-            listOfUnicodes.append(ord(listOfParameter[i]))
-        return listOfUnicodes
+    listOfParameter = list(parameter)
+    listOfUnicodes = []
+    for i in range(len(listOfParameter)):
+        listOfUnicodes.append(ord(listOfParameter[i]))
+    return listOfUnicodes
 
 def separateIntoListOf2x2Matrices(list):
-        separatedList = []
-        for i in range(0,len(list),4):
-            miniList = list[i:i+4]
-            separatedList.append(miniList)
-        for i in range(len(separatedList)):
-            separatedList[i] = [separatedList[i][:2],separatedList[i][2:]]
-        return separatedList
+    separatedList = []
+    for i in range(0,len(list),4):
+        miniList = list[i:i+4]
+        separatedList.append(miniList)
+    for i in range(len(separatedList)):
+        separatedList[i] = [separatedList[i][:2],separatedList[i][2:]]
+    return separatedList
 
 def separateIntoListOf3x3Matrices(list):
     separatedList = []
@@ -25,30 +25,28 @@ def separateIntoListOf3x3Matrices(list):
         separatedList[i] = [separatedList[i][:3],separatedList[i][3:6],separatedList[i][6:9]]
     return separatedList
 
-def matrixOperableLists(textList,keyList,padded):
-    originalLengthOfT = len(textList)
+def equalLength(keyList,lengthOfT):
+    keyList = keyList[:lengthOfT]
+    return keyList
 
-    def equalLength(keyList,lengthOfT):
-        keyList = keyList[:lengthOfT]
-        return keyList
-
-    if originalLengthOfT%4==0:
-        keyList = equalLength(keyList,originalLengthOfT)
+def matrixOperableLists(textList,keyList,padded,originalLengthOfP):
+    if originalLengthOfP%4==0:
+        keyList = equalLength(keyList,originalLengthOfP)
         textList = separateIntoListOf2x2Matrices(textList)
         keyList = separateIntoListOf2x2Matrices(keyList)
         return textList,keyList
-    elif originalLengthOfT%9==0:
-        keyList = equalLength(keyList,originalLengthOfT)
+    elif originalLengthOfP%9==0:
+        keyList = equalLength(keyList,originalLengthOfP)
         textList = separateIntoListOf3x3Matrices(textList)
         keyList = separateIntoListOf3x3Matrices(keyList)
         return textList,keyList
     else:
         padded = True
-        nextMultipleOf9 = originalLengthOfT + (9 - originalLengthOfT%9)
-        extractOfkeyList = keyList[originalLengthOfT:nextMultipleOf9]
+        nextMultipleOf9 = originalLengthOfP + (9 - originalLengthOfP%9)
+        extractOfkeyList = keyList[originalLengthOfP:nextMultipleOf9]
         textList += extractOfkeyList
-        newLengthOfT = len(textList)
-        keyList = equalLength(keyList,newLengthOfT)
+        newLengthOfP = len(textList)
+        keyList = equalLength(keyList,newLengthOfP)
         textList = separateIntoListOf3x3Matrices(textList)
         keyList = separateIntoListOf3x3Matrices(keyList)
         return textList,keyList
@@ -89,17 +87,23 @@ def is3x3MatrixSingular(matrix):
     
 def XORList(list,key):
     XORtext = []
-    for i in range(len(list)):
-        XORtext.append(list[i] ^ key[i])
+    try:
+        for i in range(len(list)):
+            XORtext.append(list[i] ^ key[i])
+    except:
+        pass
     return XORtext
 
 def encryption(plaintext,key,padded):
     listOfPlaintextCodes = listOfUnicodes(plaintext)
     listOfKeyCodes = listOfUnicodes(key)
     
+    originalLengthOfP = len(plaintext)
+    equalLength(listOfKeyCodes,originalLengthOfP)
+
     XORPlaintextCodes = XORList(listOfPlaintextCodes,listOfKeyCodes)
 
-    separatedPlaintextList,separatedKeyList = matrixOperableLists(XORPlaintextCodes,listOfKeyCodes,padded)
+    separatedPlaintextList,separatedKeyList = matrixOperableLists(XORPlaintextCodes,listOfKeyCodes,padded,originalLengthOfP)
 
     for i in range(len(separatedPlaintextList)):
         lengthOfList = len(separatedPlaintextList[i])
@@ -117,9 +121,9 @@ def encryption(plaintext,key,padded):
 
 def keyGeneration(password):
     originalLengthOfPassword = len(password)
-    print("Please randomly type on the keyboard: ")
+    print("Please randomly type on the keyboard: (Press the \"tab\" key to stop and enter key to submit)")
     DEK = takingInputs(False)
-    print("Please randomly type on the keyboard again: ")
+    print("Please randomly type on the keyboard again: (Press the \"tab\" key to stop and enter key to submit)")
     KEK = takingInputs(False)
     paddedPassword = False
     encryptedPassword,paddedPassword = encryption(password,DEK,paddedPassword)

@@ -85,10 +85,11 @@ def takingInputs(len36):
 
     def onRelease(key):
         #Stops the listener when enter is pressed
-        if key == keyboard.Key.enter:
+        
+        if key == keyboard.Key.tab:
             return False
 
-        
+    
     #Starts the listener
     with keyboard.Listener(on_press=onPress, on_release=onRelease) as listener:
         listener.join()
