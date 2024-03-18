@@ -21,16 +21,16 @@ class User():
     def addItem(self,itemName,username,password,cursor):
         userID = self.userID(cursor)
         encryptedPassword,encryptedDEK,KEK,originalLengthOfPassword,paddedPassword,paddedDEK = keyGeneration(password)
+        print(userID,itemName,username,encryptedPassword,encryptedDEK,originalLengthOfPassword,paddedPassword) 
         addItemToPasswordVault = """
-        INSERT INTO "Password Vault"(userID,itemName,username,encryptedPassword,encryptedDEK,originalLengthOfPassword,padded)
-        VALUES (?,?,?,?,?,?,?)"""
-        cursor.execute(addItemToPasswordVault,(userID,itemName,username,encryptedPassword,encryptedDEK,originalLengthOfPassword,paddedPassword))
-        #      return encryptedPassword,encryptedDEK,KEK,originalLengthOfPassword,paddedPassword,paddedDEK
+            INSERT INTO Password Vault(userID,itemName,username,encryptedPassword,encryptedDEK,originalLengthOfPassword,padded)
+            VALUES (?,?,?,?,?,?,?)"""
+        cursor.execute(addItemToPasswordVault, (userID,itemName,username,encryptedPassword,encryptedDEK,originalLengthOfPassword,paddedPassword))
         itemID = self.itemID(cursor)
         addItemToKEKs = """
-        INSERT INTO "KEKs"(itemID,KEK,padded)
-        VALUES (?,?,?)"""
-        cursor.execute(addItemToKEKs,(itemID,KEK,paddedDEK))
+            INSERT INTO "KEKs"(itemID,KEK,padded)
+            VALUES (?,?,?)"""
+        cursor.execute(addItemToKEKs, (itemID,KEK,paddedDEK))
         print("\nYou have successfully added a new item!")
         '''
         except:
@@ -70,7 +70,8 @@ class User():
             SELECT userID
             FROM Logins
             WHERE masterUsername = ?"""
-        return cursor.execute(getUserID,(self.__username,))
+        cursor.execute(getUserID,(self.__username,))
+        return cursor.fetchone()[0]
     
     def itemID(self,cursor):
         getItemID = """

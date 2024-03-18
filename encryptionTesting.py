@@ -1,5 +1,19 @@
-from encryption import keyGeneration
+from User import User
+import sqlite3
 
-encryptedPassword,encryptedDEK,KEK,originalLengthOfPassword,paddedPassword,paddedDEK = keyGeneration("Password123")
+connectionToDatabase = sqlite3.connect("/home/arun/Documents/NEA/mainDatabase.db")
+cursor = connectionToDatabase.cursor()
 
-print(encryptedPassword)
+with open("createTables.sql","r") as createTablesFile:
+    createTables = createTablesFile.read()
+    cursor.executescript(createTables)
+    connectionToDatabase.commit()
+
+    getUserID = """
+        SELECT userID
+        FROM Logins"""
+    cursor.execute(getUserID)
+    print(cursor.fetchone())
+
+connectionToDatabase.commit()
+connectionToDatabase.close()
