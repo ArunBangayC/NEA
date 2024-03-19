@@ -1,4 +1,5 @@
 from encryption import listOfUnicodes, separateIntoListOf2x2Matrices, separateIntoListOf3x3Matrices, XORList
+import json
 
 def determinantOf2x2Matrix(matrix):
     return (matrix[0][0]*matrix[1][1]) - (matrix[0][1]*matrix[1][0])
@@ -91,5 +92,5 @@ def decryption(ciphertext,key):
     for i in range(len(XORciphertext)):
         XORciphertext[i] = chr(XORciphertext[i])
     ciphertext = ''.join(XORciphertext)
-
-print(decryption([[[48, 18], [73, 36]], [[70, 91], [64, 2]]],"@s:W142f8-26|YO&7e01020E163\89]81mo309an80rOA9|b2O3O302>\51789625462709646504122308875126078951622392920510153359360000000"))
+    ciphertext = json.loads(ciphertext)
+    return ciphertext

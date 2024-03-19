@@ -1,4 +1,5 @@
 from randomGeneration import takingInputs
+import json
 
 def listOfUnicodes(parameter):
     listOfParameter = list(parameter)
@@ -117,6 +118,7 @@ def encryption(plaintext,key,padded):
                 separatedPlaintextList[i] = multiplyingMatrices(separatedPlaintextList[i],separatedKeyList[i])
             else:
                 keyGeneration(plaintext)
+    separatedPlaintextList = json.dumps(separatedPlaintextList)
     return separatedPlaintextList,padded
 
 def keyGeneration(password):
