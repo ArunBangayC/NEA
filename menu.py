@@ -65,7 +65,11 @@ def passwordVault(currentUser,conn,cursor):
         elif retrieveAddStored.lower() == "a":
             itemName = input("\nPlease enter the name of the application or website:  ")
             username,password = addUsername()
-            currentUser.addItem(itemName,username,password,cursor)
+            successful = currentUser.addItem(itemName,username,password,cursor)
+            if successful == True:
+                conn.commit()
+            else:
+                options()
 
         else:
             print("\nHmmmm, looks like you didn't enter an option... Try again.")

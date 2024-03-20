@@ -123,9 +123,9 @@ def encryption(plaintext,key,padded):
 
 def keyGeneration(password):
     originalLengthOfPassword = len(password)
-    print("\nPlease randomly type on the keyboard: (Press the \"tab\" key to stop and enter key to submit)")
+    print("\nPlease randomly type on the keyboard: (Press the \"tab\" key to submit)")
     DEK = takingInputs(False)
-    print("\nPlease randomly type on the keyboard again: (Press the \"tab\" key to stop and enter key to submit)")
+    print("\nPlease randomly type on the keyboard again: (Press the \"tab\" key to submit)")
     KEK = takingInputs(False)
     paddedPassword = False
     encryptedPassword,paddedPassword = encryption(password,DEK,paddedPassword)

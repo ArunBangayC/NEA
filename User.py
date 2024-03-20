@@ -30,8 +30,9 @@ class User():
         addItemToKEKs = """
             INSERT INTO "KEKs"(itemID,KEK,padded)
             VALUES (?,?,?)"""
-        cursor.execute(addItemToKEKs, (itemID,KEK,paddedDEK))
+        cursor.execute(addItemToKEKs,(itemID,KEK,paddedDEK))
         print("\nYou have successfully added a new item!")
+        return True
         '''
         except:
             print("\nIt looks like we couldn't add your item... Please try again.")
@@ -43,7 +44,8 @@ class User():
             SELECT itemID
             FROM "Password Vault"
             WHERE userID = ?"""
-        cursor.execute(getItemID,(self.__userID(self,cursor)))
+        userID = (self.__userID(cursor))
+        cursor.execute(getItemID,(userID,))
         return cursor.fetchone()[0]
     
     def __userID(self,cursor):
