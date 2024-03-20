@@ -14,7 +14,7 @@ def addPassword():
 def addUsername():
     username = input("\nPlease enter your username/email here:   ")
     correctUsername = input("\nIs this the correct username? (Y):  ")
-    if correctUsername.lower() == "y":
+    if correctUsername.lower() == "y" or "":
         password = addPassword()
         return username,password
     else:
@@ -23,7 +23,7 @@ def addUsername():
 def addNewUser(conn,cursor):
     fullName = (input("\nPlease enter your first and last name here:  ")).split()
     correctName= input("\nIs this the correct name? (Y):  ")
-    if len(fullName)==2 and correctName.lower() == "y":
+    if len(fullName)==2 and correctName.lower() == "y" or "":
         username,password = addUsername()
         firstName = fullName.pop(0)
         lastName = fullName.pop(0)
@@ -35,15 +35,16 @@ def addNewUser(conn,cursor):
         addNewUser(conn,cursor)
 
 def logIn(conn,cursor):
-    username = input("\nPlease enter your username/email here:   ")
-    password = getpass.getpass("\nPlease enter your password here:    ")
-    if len(username) > 0 and len(password) > 0:
-        currentUser = User(username, password)
-        if currentUser.loginUser(username, password, cursor) != False:
-            passwordVault(currentUser, conn, cursor)
-    else:
-        print("\nHmmmmmm, it looks like the information you entered is incorrect... Please try again.")
-        logIn(conn,cursor)
+    while True:
+        username = input("\nPlease enter your username/email here:   ")
+        password = getpass.getpass("\nPlease enter your password here:    ")
+        if len(username) > 0 and len(password) > 0:
+            currentUser = User(username, password)
+            if currentUser.loginUser(username, password, cursor) != False:
+                passwordVault(currentUser, conn, cursor)
+                break
+        else:
+            print("\nHmmmmmm, it looks like the information you entered is incorrect... Please try again.")
 
 ############################################################################################
 
@@ -54,24 +55,32 @@ def mainMenu(conn,cursor):
     elif loginOrAdd.lower() == "a":
         addNewUser(conn,cursor)
 
-def passwordVault(currentUser,conn,cursor):
+def passwordVault(currentUser, conn, cursor):
     conn.commit()
-    print("\nWelcome to Password Vault!  \nThis is a simple password manager that allows you to store, retrieve and generate your passwords.  \nEnjoy!")
-    def options():
-        retrieveAddStored = input("\nWould you like to retrieve information, add new information or see all of your stored information? (R or A or S):  ")
+    print("\nWelcome to Password Vault! \nThis is a simple password manager that allows you to store, retrieve, and generate your passwords. \nEnjoy!")
+    while True:
+        retrieveAddStored = input("\nWould you like to retrieve information, add new information, or see all of your stored information? (R or A or S): ")
+
         if retrieveAddStored.lower() == "r":
             infoOnCurrentUser = currentUser.retrieveInfo(cursor)
-            print(infoOnCurrentUser)
+            if infoOnCurrentUser != False:
+                print(infoOnCurrentUser)
+
         elif retrieveAddStored.lower() == "a":
-            itemName = input("\nPlease enter the name of the application or website:  ")
+            itemName = input("\nPlease enter the name of the application or website: ")
             username,password = addUsername()
             successful = currentUser.addItem(itemName,username,password,cursor)
-            if successful == True:
+            if successful:
                 conn.commit()
             else:
-                options()
+                continue
+
+        elif retrieveAddStored.lower() == "s":
+            pass
 
         else:
             print("\nHmmmm, looks like you didn't enter an option... Try again.")
-            options()
-    options()
+
+        userChoice = input("\nWould you like to continue? (yes/no): ")
+        if userChoice.lower() != "yes" or "":
+            break

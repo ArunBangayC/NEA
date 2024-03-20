@@ -6,38 +6,38 @@ class User():
         self.__hashedPassword = self.__hashFunction(password)
 
     def retrieveInfo(self,cursor):
-        try:
-            userID = self.__userID(cursor)
-            grabInfo = """
-            SELECT itemName,username
-            FROM Password Vault
-            WHERE userID = ?"""
-            userInfo = cursor.execute(grabInfo,(userID))
-            return userInfo
+        userID = self.__userID(cursor)
+        grabInfo = """
+        SELECT itemName,username
+        FROM "Password Vault"
+        WHERE userID = ?"""
+        cursor.execute(grabInfo,(userID,))
+        return cursor.fetchall()
+        '''
         except:
             print("\nIt looks like we couldn't find your passwords... Please try again.")
             return False
+            '''
             
     def addItem(self,itemName,username,password,cursor):
-        userID = self.__userID(cursor)
-        encryptedPassword,encryptedDEK,KEK,originalLengthOfPassword,paddedPassword,paddedDEK = keyGeneration(password)
-        print(userID,itemName,username,encryptedPassword,encryptedDEK,originalLengthOfPassword,paddedPassword) 
-        addItemToPasswordVault = """
-            INSERT INTO "Password Vault" (userID,itemName,username,encryptedPassword,encryptedDEK,originalLengthOfPassword,padded)
-            VALUES (?,?,?,?,?,?,?)"""
-        cursor.execute(addItemToPasswordVault, (userID,itemName,username,encryptedPassword,encryptedDEK,originalLengthOfPassword,paddedPassword))
-        itemID = self.__itemID(cursor)
-        addItemToKEKs = """
-            INSERT INTO "KEKs"(itemID,KEK,padded)
-            VALUES (?,?,?)"""
-        cursor.execute(addItemToKEKs,(itemID,KEK,paddedDEK))
-        print("\nYou have successfully added a new item!")
-        return True
-        '''
+        try:
+            userID = self.__userID(cursor)
+            encryptedPassword,encryptedDEK,KEK,originalLengthOfPassword,paddedPassword,paddedDEK = keyGeneration(password)
+            print(userID,itemName,username,encryptedPassword,encryptedDEK,originalLengthOfPassword,paddedPassword) 
+            addItemToPasswordVault = """
+                INSERT INTO "Password Vault" (userID,itemName,username,encryptedPassword,encryptedDEK,originalLengthOfPassword,padded)
+                VALUES (?,?,?,?,?,?,?)"""
+            cursor.execute(addItemToPasswordVault, (userID,itemName,username,encryptedPassword,encryptedDEK,originalLengthOfPassword,paddedPassword))
+            itemID = self.__itemID(cursor)
+            addItemToKEKs = """
+                INSERT INTO "KEKs"(itemID,KEK,padded)
+                VALUES (?,?,?)"""
+            cursor.execute(addItemToKEKs,(itemID,KEK,paddedDEK))
+            print("\nYou have successfully added a new item!")
+            return True
         except:
             print("\nIt looks like we couldn't add your item... Please try again.")
             return False
-            '''
     
     def __itemID(self,cursor):
         getItemID = """
