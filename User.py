@@ -6,22 +6,24 @@ class User():
         self.__username = username
         self.__hashedPassword = self.__hashFunction(password)
 
-    def retrieveInfo(self,cursor):
-        userID = self.__userID(cursor)
-        grabInfo = """
-        SELECT itemName,username
-        FROM "Password Vault"
-        WHERE userID = ?"""
-        userInfo = cursor.execute(grabInfo,(userID,))
-        userInfo = cursor.fetchall()
-        for i in range(len(userInfo)):
-            print("\nItem Name: ",userInfo[i][0],"\nUsername: ",userInfo[i][1])
-        
-        '''
+    def retrieveLogins(self,cursor):
+        try:
+            userID = self.__userID(cursor)
+            grabInfo = """
+            SELECT itemName,username
+            FROM "Password Vault"
+            WHERE userID = ?"""
+            cursor.execute(grabInfo,(userID,))
+            userInfo = cursor.fetchall()
+            print(tabulate(userInfo,headers=["Item Name:","Username:"],tablefmt="simple_grid"))
         except:
             print("\nIt looks like we couldn't find your passwords... Please try again.")
             return False
-            '''
+    
+    def retrieveItem(self,itemName,cursor):
+        try:
+            retrieveItem = """
+            SELECT itemName"""
             
     def addItem(self,itemName,username,password,cursor):
         try:

@@ -90,7 +90,9 @@ def passwordVault(currentUser, conn, cursor):
         retrieveOrAdd = input("\nWould you like to retrieve information or add new information? (R or A): ")
 
         if retrieveOrAdd.lower() == "r":
-            print(currentUser.retrieveInfo(cursor))
+            currentUser.retrieveLogins(cursor)
+            itemName = input("\nPlease enter the name of the application or website that you want to retrieve: ")
+            currentUser.retrieveItem(itemName,cursor)
 
         elif retrieveOrAdd.lower() == "a":
             itemName = input("\nPlease enter the name of the application or website: ")
