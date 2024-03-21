@@ -16,18 +16,19 @@ def addUsername():
     username = input("\nPlease enter your username/email here:   ")
     correctUsername = input("\nIs this the correct username? (Y):  ")
 
-    if correctUsername.lower() == "y" or correctUsername == "":
-        optionForRandomGeneration = input("\nWould you like to randomly generate a password? (Y or N): ")
-        print(optionForRandomGeneration)
-        try:
+    try:
+        if correctUsername.lower() == "y" or correctUsername == "":
+            optionForRandomGeneration = input("\nWould you like to randomly generate a password? (Y or N): ")
+            print(optionForRandomGeneration)
             if optionForRandomGeneration.lower() == "y" or optionForRandomGeneration == "":
                 print("\nPlease randomly type on the keyboard: (Press the \"tab\" key to submit)")
                 randomlyGeneratedPassword = takingInputs()
+                pressEnter = input("\nPress enter to submit your password: ")
+                lengthOfRGPassword = 0
                 for i in range(len(randomlyGeneratedPassword)-1,0,-1):
-                    i = str(i)
-                    if not i.isdigit():
-                        lengthOfRGPassword = i
-                    break
+                    if not str(randomlyGeneratedPassword[i]).isdigit():
+                        lengthOfRGPassword = str(i)
+                        break
                 desriredLengthOfRGPassword = input("\nHow long would you like your password to be? (up to "+str(lengthOfRGPassword)+")): ")
                 password = randomlyGeneratedPassword[:int(desriredLengthOfRGPassword)]
                 return username,password
@@ -35,11 +36,11 @@ def addUsername():
                 password = addPassword()
                 return username,password
             else:
-                print("\nHmmmm, that didn't seem to work... Try again.")
+                print("\nHmmmm, that didn't seem to work... Try again bozo.")
                 return addUsername()
-        except:
-            print("\nHmmmm, that didn't seem to work... Try again.")
-            return addUsername()
+    except:
+        print("\nHmmmm, that didn't seem to work... Try again.")
+        return addUsername()
         
 def addNewUser(conn,cursor):
     fullName = (input("\nPlease enter your first and last name here:  ")).split()
@@ -67,7 +68,7 @@ def logIn(conn,cursor):
         else:
             print("\nHmmmmmm, it looks like the information you entered is incorrect... Please try again.")
 
-############################################################################################
+###########################################################################################################
 
 def mainMenu(conn,cursor):
     loginOrAdd = input("\nWould you like to login or add a new user? (L or A):  ")
