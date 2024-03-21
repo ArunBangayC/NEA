@@ -1,10 +1,10 @@
+import getpass
 from User import User,NewUser
 from randomGeneration import takingInputs
 
-import getpass
 strongPasswordInfomation = "I recommend a password that is at least 8 characters long with a mix of letters, numbers and special characters."
 
-def addUsername(optionForRandomGeneration):
+def addUsername():
     def addPassword():
         password = getpass.getpass("\nPlease enter your password here (you won't be able to see it!):    ")
         correctPassword = input("\nWould you like to submit this password? (Y): ")
@@ -15,21 +15,37 @@ def addUsername(optionForRandomGeneration):
         
     username = input("\nPlease enter your username/email here:   ")
     correctUsername = input("\nIs this the correct username? (Y):  ")
-    if correctUsername.lower() == "y" or "" and optionForRandomGeneration == False:
-        password = addPassword()
-        return username,password
-    elif correctUsername.lower() == "y" or "" and optionForRandomGeneration == True:
-        print("\nPlease randomly type on the keyboard: (Press the \"tab\" key to submit)")
-        randomlyGeneratedPassword = takingInputs()
-        desriredLengthOfRGPassword = input("\nHow long would you like your password to be? (8-81): ")
-    else:
-        return addUsername(optionForRandomGeneration)
 
+    if correctUsername.lower() == "y" or correctUsername == "":
+        optionForRandomGeneration = input("\nWould you like to randomly generate a password? (Y or N): ")
+        print(optionForRandomGeneration)
+        try:
+            if optionForRandomGeneration.lower() == "y" or optionForRandomGeneration == "":
+                print("\nPlease randomly type on the keyboard: (Press the \"tab\" key to submit)")
+                randomlyGeneratedPassword = takingInputs()
+                for i in range(len(randomlyGeneratedPassword)-1,0,-1):
+                    i = str(i)
+                    if not i.isdigit():
+                        lengthOfRGPassword = i
+                    break
+                desriredLengthOfRGPassword = input("\nHow long would you like your password to be? (up to "+str(lengthOfRGPassword)+")): ")
+                password = randomlyGeneratedPassword[:int(desriredLengthOfRGPassword)]
+                return username,password
+            elif optionForRandomGeneration.lower() == "n":
+                password = addPassword()
+                return username,password
+            else:
+                print("\nHmmmm, that didn't seem to work... Try again.")
+                return addUsername()
+        except:
+            print("\nHmmmm, that didn't seem to work... Try again.")
+            return addUsername()
+        
 def addNewUser(conn,cursor):
     fullName = (input("\nPlease enter your first and last name here:  ")).split()
     correctName= input("\nIs this the correct name? (Y):  ")
     if len(fullName)==2 and correctName.lower() == "y" or "":
-        username,password = addUsername(False)
+        username,password = addUsername()
         firstName = fullName.pop(0)
         lastName = fullName.pop(0)
         newUser = NewUser(username,password,firstName,lastName)
@@ -64,7 +80,7 @@ def passwordVault(currentUser, conn, cursor):
     conn.commit()
     print("\nWelcome to Password Vault! \nThis is a simple password manager that allows you to store, retrieve, and generate your passwords. \nEnjoy!")
     while True:
-        retrieveOrAdd = input("\nWould you like to retrieve information or add new information,? (R or A): ")
+        retrieveOrAdd = input("\nWould you like to retrieve information or add new information? (R or A): ")
 
         if retrieveOrAdd.lower() == "r":
             print(currentUser.retrieveInfo(cursor))
