@@ -11,20 +11,20 @@ def addPassword():
     else:
         return addPassword()
 
-def addUsername():
+def addUsername(optionForRandomGeneration):
     username = input("\nPlease enter your username/email here:   ")
     correctUsername = input("\nIs this the correct username? (Y):  ")
     if correctUsername.lower() == "y" or "":
         password = addPassword()
         return username,password
     else:
-        return addUsername()
+        return addUsername(optionForRandomGeneration)
 
 def addNewUser(conn,cursor):
     fullName = (input("\nPlease enter your first and last name here:  ")).split()
     correctName= input("\nIs this the correct name? (Y):  ")
     if len(fullName)==2 and correctName.lower() == "y" or "":
-        username,password = addUsername()
+        username,password = addUsername(False)
         firstName = fullName.pop(0)
         lastName = fullName.pop(0)
         newUser = NewUser(username,password,firstName,lastName)
@@ -59,14 +59,12 @@ def passwordVault(currentUser, conn, cursor):
     conn.commit()
     print("\nWelcome to Password Vault! \nThis is a simple password manager that allows you to store, retrieve, and generate your passwords. \nEnjoy!")
     while True:
-        retrieveAddStored = input("\nWould you like to retrieve information, add new information, or see all of your stored information? (R or A or S): ")
+        retrieveOrAdd = input("\nWould you like to retrieve information or add new information,? (R or A): ")
 
-        if retrieveAddStored.lower() == "r":
-            infoOnCurrentUser = currentUser.retrieveInfo(cursor)
-            if infoOnCurrentUser != False:
-                print(infoOnCurrentUser)
+        if retrieveOrAdd.lower() == "r":
+            print(currentUser.retrieveInfo(cursor))
 
-        elif retrieveAddStored.lower() == "a":
+        elif retrieveOrAdd.lower() == "a":
             itemName = input("\nPlease enter the name of the application or website: ")
             username,password = addUsername()
             successful = currentUser.addItem(itemName,username,password,cursor)
@@ -74,9 +72,6 @@ def passwordVault(currentUser, conn, cursor):
                 conn.commit()
             else:
                 continue
-
-        elif retrieveAddStored.lower() == "s":
-            pass
 
         else:
             print("\nHmmmm, looks like you didn't enter an option... Try again.")

@@ -1,4 +1,5 @@
 from encryption import keyGeneration
+from tabulate import tabulate   
 
 class User():
     def __init__(self,username,password):
@@ -11,8 +12,11 @@ class User():
         SELECT itemName,username
         FROM "Password Vault"
         WHERE userID = ?"""
-        cursor.execute(grabInfo,(userID,))
-        return cursor.fetchall()
+        userInfo = cursor.execute(grabInfo,(userID,))
+        userInfo = cursor.fetchall()
+        for i in range(len(userInfo)):
+            print("\nItem Name: ",userInfo[i][0],"\nUsername: ",userInfo[i][1])
+        
         '''
         except:
             print("\nIt looks like we couldn't find your passwords... Please try again.")
