@@ -4,7 +4,7 @@ import psutil
 
 encoding = ['g', ':', 's', '*', 'C', '@', 'y', 'L', 'W', 'u', '(', 'E', '=', 'O', 'q', '>', 'm', '{', 'x', 't', '!', 'K', 'S', '<', '/', 'V', 'B', ',', 'F', '+', 'J', 'U', 'b', 'o', 'M', 'Q', '&', 'Z', ';', 'N', 'T', '"', 'j', 'Y', 'w', 'X', 'G', '}', ']', '|', 'h', 'R', '-', '$', "'", 'p', 'D', '#', '\\', 'c', 'i', 'k', 'd', 'P', 'n', 'l', 'e', 'I', 'f', 'A', 'v', 'r', ')', '%', '[', '.', 'a', '_', 'H', 'z', '?']
 
-def addLettersAndChars(keyPressMilliseconds,interruptsOnKeyPress,longRandomNumber,len36):
+def addLettersAndChars(keyPressMilliseconds,interruptsOnKeyPress,longRandomNumber):
     longRandomList = list(str(longRandomNumber))
 
     #Encodes the first digits
@@ -56,21 +56,20 @@ def addLettersAndChars(keyPressMilliseconds,interruptsOnKeyPress,longRandomNumbe
                         pass
             except:
                 pass
+    
+    #addition from 3.4. Code Session 4:
+    for i in interruptsOnKeyPress:
+        element = int(i[:-2])
+        try:
+            
 
-    if len36 == True:
-        random = longRandomList[:36]
-        for i in range(len(random)):
-            random[i] = str(random[i])
-        random = ''.join(random)
-        return random
-    else:
-        for i in range(len(longRandomList)):
-            longRandomList[i] = str(longRandomList[i])
-        longRandom = ''.join(longRandomList)
-        return longRandom
+    for i in range(len(longRandomList)):
+        longRandomList[i] = str(longRandomList[i])
+    longRandom = ''.join(longRandomList)
+    return longRandom
         
 
-def takingInputs(len36):
+def takingInputs():
     recordedKeyPresses = []
     keyPressTimes = []
     interruptsOnKeyPress = []
@@ -110,5 +109,6 @@ def takingInputs(len36):
         sumOfInterrupts += interruptsOnKeyPress[i]
 
     longRandomNumber = (productOfDigits*sumOfUnicodes*sumOfInterrupts)
+    print(keyPressMilliseconds,interruptsOnKeyPress,longRandomNumber)
 
-    return addLettersAndChars(keyPressMilliseconds,interruptsOnKeyPress,longRandomNumber,len36)
+    return addLettersAndChars(keyPressMilliseconds,interruptsOnKeyPress,longRandomNumber)

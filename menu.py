@@ -1,22 +1,27 @@
 from User import User,NewUser
+from randomGeneration import takingInputs
 
 import getpass
 strongPasswordInfomation = "I recommend a password that is at least 8 characters long with a mix of letters, numbers and special characters."
 
-def addPassword():
-    password = getpass.getpass("\nPlease enter your password here (you won't be able to see it!):    ")
-    correctPassword = input("\nWould you like to submit this password? (Y): ")
-    if correctPassword.lower() == "y":
-        return password
-    else:
-        return addPassword()
-
 def addUsername(optionForRandomGeneration):
+    def addPassword():
+        password = getpass.getpass("\nPlease enter your password here (you won't be able to see it!):    ")
+        correctPassword = input("\nWould you like to submit this password? (Y): ")
+        if correctPassword.lower() == "y":
+            return password
+        else:
+            return addPassword()
+        
     username = input("\nPlease enter your username/email here:   ")
     correctUsername = input("\nIs this the correct username? (Y):  ")
-    if correctUsername.lower() == "y" or "":
+    if correctUsername.lower() == "y" or "" and optionForRandomGeneration == False:
         password = addPassword()
         return username,password
+    elif correctUsername.lower() == "y" or "" and optionForRandomGeneration == True:
+        print("\nPlease randomly type on the keyboard: (Press the \"tab\" key to submit)")
+        randomlyGeneratedPassword = takingInputs()
+        desriredLengthOfRGPassword = input("\nHow long would you like your password to be? (8-81): ")
     else:
         return addUsername(optionForRandomGeneration)
 
