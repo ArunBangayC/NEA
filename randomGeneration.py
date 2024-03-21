@@ -59,8 +59,10 @@ def addLettersAndChars(keyPressMilliseconds,interruptsOnKeyPress,longRandomNumbe
     
     #addition from 3.4. Code Session 4:
     for i in interruptsOnKeyPress:
-        element = int(i[:-2])
-        try:
+        element = int(str(i)[-2:])
+        print("Element"+str(i)+": ",str(element))
+        if element<= len(longRandomList) and element<=len(encoding):
+            longRandomList[element] = encoding[element]
             
 
     for i in range(len(longRandomList)):
@@ -109,6 +111,4 @@ def takingInputs():
         sumOfInterrupts += interruptsOnKeyPress[i]
 
     longRandomNumber = (productOfDigits*sumOfUnicodes*sumOfInterrupts)
-    print(keyPressMilliseconds,interruptsOnKeyPress,longRandomNumber)
-
     return addLettersAndChars(keyPressMilliseconds,interruptsOnKeyPress,longRandomNumber)
