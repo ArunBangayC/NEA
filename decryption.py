@@ -1,5 +1,5 @@
-from encryption import listOfUnicodes, separateIntoListOf2x2Matrices, separateIntoListOf3x3Matrices, XORList
 import json
+from encryption import listOfUnicodes, separateIntoListOf2x2Matrices, separateIntoListOf3x3Matrices, XORList
 
 def determinantOf2x2Matrix(matrix):
     return (matrix[0][0]*matrix[1][1]) - (matrix[0][1]*matrix[1][0])

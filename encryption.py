@@ -1,5 +1,5 @@
-from randomGeneration import takingInputs
 import json
+from randomGeneration import randomGeneration
 
 def listOfUnicodes(parameter):
     listOfParameter = list(parameter)
@@ -124,9 +124,9 @@ def encryption(plaintext,key,padded):
 def keyGeneration(password):
     originalLengthOfPassword = len(password)
     print("\nPlease randomly type on the keyboard: (Press the \"tab\" key to submit)")
-    DEK = takingInputs()
+    DEK = randomGeneration()
     print("\nPlease randomly type on the keyboard again: (Press the \"tab\" key to submit)")
-    KEK = takingInputs()
+    KEK = randomGeneration()
     paddedPassword = False
     encryptedPassword,paddedPassword = encryption(password,DEK,paddedPassword)
     paddedDEK = False

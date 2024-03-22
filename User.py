@@ -7,23 +7,40 @@ class User():
         self.__hashedPassword = self.__hashFunction(password)
 
     def retrieveLogins(self,cursor):
-        try:
-            userID = self.__userID(cursor)
-            grabInfo = """
-            SELECT itemName,username
-            FROM "Password Vault"
-            WHERE userID = ?"""
-            cursor.execute(grabInfo,(userID,))
-            userInfo = cursor.fetchall()
-            print(tabulate(userInfo,headers=["Item Name:","Username:"],tablefmt="simple_grid"))
-        except:
-            print("\nIt looks like we couldn't find your passwords... Please try again.")
-            return False
-    
-    def retrieveItem(self,itemName,cursor):
-        try:
-            retrieveItem = """
-            SELECT itemName"""
+        # try:
+        userID = self.__userID(cursor)
+        grabInfo = """
+        SELECT itemName,username,itemID
+        FROM "Password Vault"
+        WHERE userID = ?"""
+        cursor.execute(grabInfo,(userID,))
+        userInfo = cursor.fetchall()
+
+        #Makes a separate list of the item name and username that is given to the user, userInfo retains the itemID.
+        itemNameAndUsername = []
+        for i in userInfo:
+            itemNameAndUsername.append((i[0],i[1]))
+
+        print(tabulate(itemNameAndUsername,headers=["Item Name:","Username:"],tablefmt="simple_grid"))
+        print("userInfo: ",userInfo)
+        itemName = input("\nPlease enter the name of the application or website that you want to retrieve: ")
+
+        for i in userInfo:
+            if i[0] == itemName:
+                itemID = i[2]
+                break
+        
+        grabInfo = """
+        SELECT itemName,username,encryptedPassword,encryptedDEK,originalLengthOfPassword,padded
+        FROM "Password Vault"
+        WHERE itemID = ?"""
+
+        cursor.execute(grabInfo,(itemID,))
+        itemInfo = cursor.fetchone()
+        print(itemInfo)
+        # except:
+        #     print("\nIt looks like we couldn't find your passwords... Please try again.")
+        #     return False
             
     def addItem(self,itemName,username,password,cursor):
         try:

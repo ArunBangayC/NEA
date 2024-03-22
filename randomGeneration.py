@@ -4,7 +4,47 @@ import psutil
 
 encoding = ['g', ':', 's', '*', 'C', '@', 'y', 'L', 'W', 'u', '(', 'E', '=', 'O', 'q', '>', 'm', '{', 'x', 't', '!', 'K', 'S', '<', '/', 'V', 'B', ',', 'F', '+', 'J', 'U', 'b', 'o', 'M', 'Q', '&', 'Z', ';', 'N', 'T', '"', 'j', 'Y', 'w', 'X', 'G', '}', ']', '|', 'h', 'R', '-', '$', "'", 'p', 'D', '#', '\\', 'c', 'i', 'k', 'd', 'P', 'n', 'l', 'e', 'I', 'f', 'A', 'v', 'r', ')', '%', '[', '.', 'a', '_', 'H', 'z', '?']
 
-def addLettersAndChars(keyPressMilliseconds,interruptsOnKeyPress,longRandomNumber):
+def randomGeneration():
+    recordedKeyPresses = []
+    keyPressTimes = []
+    interruptsOnKeyPress = []
+    keyPressMilliseconds = []
+
+    def onPress(key):
+        #Adds recorded key presses to recordedKeyPresses list
+        recordedKeyPresses.append(key)
+        keyPressTimes.append(int(time.monotonic()*1000))
+        interrupt= psutil.cpu_stats().interrupts
+        interruptsOnKeyPress.append(interrupt)
+
+    def onRelease(key):
+        #Stops the listener when enter is pressed
+        
+        if key == keyboard.Key.tab:
+            return False
+
+    
+    #Starts the listener
+    with keyboard.Listener(on_press=onPress, on_release=onRelease) as listener:
+        listener.join()
+
+    sumOfUnicodes = 0
+    for key in recordedKeyPresses:
+        if hasattr(key, 'char'): #Checks if the key pressed is a character
+            sumOfUnicodes += ord(key.char)
+
+    productOfDigits = 1
+    for t in keyPressTimes:
+        last4Digits = t % 10000
+        keyPressMilliseconds.append(last4Digits)
+        productOfDigits *= last4Digits
+
+    sumOfInterrupts = 0
+    for i in range(len(interruptsOnKeyPress)):
+        sumOfInterrupts += interruptsOnKeyPress[i]
+
+    longRandomNumber = (productOfDigits*sumOfUnicodes*sumOfInterrupts)
+    
     longRandomList = list(str(longRandomNumber))
 
     #Encodes the first digits
@@ -66,47 +106,5 @@ def addLettersAndChars(keyPressMilliseconds,interruptsOnKeyPress,longRandomNumbe
     for i in range(len(longRandomList)):
         longRandomList[i] = str(longRandomList[i])
     longRandom = ''.join(longRandomList)
-    return longRandom
-        
-
-def takingInputs():
-    recordedKeyPresses = []
-    keyPressTimes = []
-    interruptsOnKeyPress = []
-    keyPressMilliseconds = []
-
-    def onPress(key):
-        #Adds recorded key presses to recordedKeyPresses list
-        recordedKeyPresses.append(key)
-        keyPressTimes.append(int(time.monotonic()*1000))
-        interrupt= psutil.cpu_stats().interrupts
-        interruptsOnKeyPress.append(interrupt)
-
-    def onRelease(key):
-        #Stops the listener when enter is pressed
-        
-        if key == keyboard.Key.tab:
-            return False
-
     
-    #Starts the listener
-    with keyboard.Listener(on_press=onPress, on_release=onRelease) as listener:
-        listener.join()
-
-    sumOfUnicodes = 0
-    for key in recordedKeyPresses:
-        if hasattr(key, 'char'): #Checks if the key pressed is a character
-            sumOfUnicodes += ord(key.char)
-
-    productOfDigits = 1
-    for t in keyPressTimes:
-        last4Digits = t % 10000
-        keyPressMilliseconds.append(last4Digits)
-        productOfDigits *= last4Digits
-
-    sumOfInterrupts = 0
-    for i in range(len(interruptsOnKeyPress)):
-        sumOfInterrupts += interruptsOnKeyPress[i]
-
-    longRandomNumber = (productOfDigits*sumOfUnicodes*sumOfInterrupts)
-    return addLettersAndChars(keyPressMilliseconds,interruptsOnKeyPress,longRandomNumber)
+    return longRandom

@@ -1,6 +1,6 @@
 import getpass
 from User import User,NewUser
-from randomGeneration import takingInputs
+from randomGeneration import randomGeneration
 
 strongPasswordInfomation = "I recommend a password that is at least 8 characters long with a mix of letters, numbers and special characters."
 
@@ -22,7 +22,7 @@ def addUsername():
             while True:
                 if optionForRandomGeneration.lower() == "y" or optionForRandomGeneration == "":
                     print("\nPlease randomly type on the keyboard: (Press the \"tab\" key to submit)")
-                    randomlyGeneratedPassword = takingInputs()
+                    randomlyGeneratedPassword = randomGeneration()
                     pressEnter = input("\nPress enter to submit your password: ")
                     lengthOfRGPassword = 0
                     for i in range(len(randomlyGeneratedPassword)-1,0,-1):
@@ -91,8 +91,7 @@ def passwordVault(currentUser, conn, cursor):
 
         if retrieveOrAdd.lower() == "r":
             currentUser.retrieveLogins(cursor)
-            itemName = input("\nPlease enter the name of the application or website that you want to retrieve: ")
-            currentUser.retrieveItem(itemName,cursor)
+
 
         elif retrieveOrAdd.lower() == "a":
             itemName = input("\nPlease enter the name of the application or website: ")
