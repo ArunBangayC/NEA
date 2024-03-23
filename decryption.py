@@ -4,13 +4,15 @@ from encryption import listOfUnicodes, separateIntoListOf2x2Matrices, separateIn
 def determinantOf2x2Matrix(matrix):
     return (matrix[0][0]*matrix[1][1]) - (matrix[0][1]*matrix[1][0])
 
+def determinantOf3x3Matrix(matrix):
+    return (matrix[0][0]*determinantOf2x2Matrix([[matrix[1][1],matrix[1][2]],[matrix[2][1],matrix[2][2]]]))-(matrix[1][0]*determinantOf2x2Matrix([[matrix[0][1],matrix[0][2]],[matrix[2][1],matrix[2][2]]]))+(matrix[2][0]*determinantOf2x2Matrix([[matrix[0][1],matrix[0][2]],[matrix[1][1],matrix[1][2]]]))
+
 def inverseOf2x2Matrix(matrix):
     #matrix is given as [[a,b],[c,d]]
     inverseMatrix = [[0,0],[0,0]]
     determinant = determinantOf2x2Matrix(matrix)
     reciprocalOfDeterminant = float(1/determinant)
     adjugateOfMatrix = [[matrix[1][1],(-1*matrix[0][1])],[(-1*matrix[1][0]),matrix[0][0]]]
-    print(adjugateOfMatrix)
     for i in range(len(adjugateOfMatrix)):
         for j in range(len(adjugateOfMatrix[i])):
             inverseMatrix[i][j] += (reciprocalOfDeterminant*float(adjugateOfMatrix[i][j]))
@@ -18,8 +20,9 @@ def inverseOf2x2Matrix(matrix):
 
 def inverseOf3x3Matrix(matrix):
     #matrix is given as [[a,b,c],[d,e,f],[g,h,i]]
+    print("matrix: ", matrix)
     inverseMatrix = [[0,0,0],[0,0,0],[0,0,0]]
-    determinant = (matrix[0][0]*determinantOf2x2Matrix([[matrix[1][1],matrix[1][2]],[matrix[2][1],matrix[2][2]]]))-(matrix[1][0]*determinantOf2x2Matrix([[matrix[0][1],matrix[0][2]],[matrix[2][1],matrix[2][2]]]))+(matrix[2][0]*determinantOf2x2Matrix([[matrix[0][1],matrix[0][2]],[matrix[1][1],matrix[1][2]]]))
+    determinant = determinantOf3x3Matrix(matrix)
     reciprocalOfDeterminant = 1/determinant
     for i in range(len(matrix)):
         for j in range(len(matrix[i])):
@@ -49,6 +52,8 @@ def inverseOf3x3Matrix(matrix):
     return inverseMatrix
 
 def decryption(ciphertext,key):
+    key = listOfUnicodes(key)
+
     def keyToMatrix(key):
         if len(key)%4 == 0:
             matrixKey = separateIntoListOf2x2Matrices(key)
@@ -59,22 +64,24 @@ def decryption(ciphertext,key):
         else:
             nextMultipleOf9 = len(ciphertext) + (9 - len(ciphertext)%9)
             return separateIntoListOf3x3Matrices(key[:nextMultipleOf9])
+    
+    # sumOfElements = 0
+    # for i in range(len(ciphertext)):
+    #     for j in range(len(ciphertext[i])):
+    #         for k in range(len(ciphertext[i][j])):
+    #             sumOfElements += 1
+    # key = key[:sumOfElements]
+    
+    lengthOfCiphertext = len(ciphertext)
 
-    key = listOfUnicodes(key)
-    
-    sumOfElements = 0
-    for i in range(len(ciphertext)):
-        for j in range(len(ciphertext[i])):
-            for k in range(len(ciphertext[i][j])):
-                sumOfElements += 1
-    
-    key = key[:sumOfElements]
+    key = key[:lengthOfCiphertext]
     keyMatrix = keyToMatrix(key)
-    print("keyMatrix: ",keyMatrix)
+
+    print("keyMatrix: ", keyMatrix)
 
     inverseKey = []
     for i in range(len(ciphertext)):
-        if sumOfElements%4 == 0:
+        if lengthOfCiphertext%4 == 0:
             inverseKey.append(inverseOf2x2Matrix(keyMatrix[i]))
         else:
             inverseKey.append(inverseOf3x3Matrix(keyMatrix[i]))
@@ -92,5 +99,4 @@ def decryption(ciphertext,key):
     for i in range(len(XORciphertext)):
         XORciphertext[i] = chr(XORciphertext[i])
     ciphertext = ''.join(XORciphertext)
-    ciphertext = json.loads(ciphertext)
     return ciphertext

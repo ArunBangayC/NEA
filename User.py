@@ -1,5 +1,6 @@
+from tabulate import tabulate
 from encryption import keyGeneration
-from tabulate import tabulate   
+from decryption import decryption 
 
 class User():
     def __init__(self,username,password):
@@ -22,22 +23,32 @@ class User():
             itemNameAndUsername.append((i[0],i[1]))
 
         print(tabulate(itemNameAndUsername,headers=["Item Name:","Username:"],tablefmt="simple_grid"))
-        print("userInfo: ",userInfo)
+    
         itemName = input("\nPlease enter the name of the application or website that you want to retrieve: ")
 
         for i in userInfo:
-            if i[0] == itemName:
+            if (i[0]).lower() == itemName.lower():
                 itemID = i[2]
                 break
         
-        grabInfo = """
+        grabItemInfo = """
         SELECT itemName,username,encryptedPassword,encryptedDEK,originalLengthOfPassword,padded
         FROM "Password Vault"
         WHERE itemID = ?"""
 
-        cursor.execute(grabInfo,(itemID,))
+        cursor.execute(grabItemInfo,(itemID,))
         itemInfo = cursor.fetchone()
-        print(itemInfo)
+        
+        grabKEKInfo = """
+        SELECT KEK,padded
+        FROM "KEKs"
+        WHERE itemID = ?"""
+        cursor.execute(grabKEKInfo,(itemID,))
+        KEKInfo = cursor.fetchone()
+
+        decryptedDEK = decryption(itemInfo[3],KEKInfo[0])
+        print(decryptedDEK)
+
         # except:
         #     print("\nIt looks like we couldn't find your passwords... Please try again.")
         #     return False
