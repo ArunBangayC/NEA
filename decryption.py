@@ -1,5 +1,5 @@
 import json
-from encryption import listOfUnicodes, separateIntoListOf2x2Matrices, separateIntoListOf3x3Matrices, XORList
+from encryption import listOfUnicodes, separateIntoListOf2x2Matrices, separateIntoListOf3x3Matrices, XORList, multiplyingMatrices
 
 def determinantOf2x2Matrix(matrix):
     return (matrix[0][0]*matrix[1][1]) - (matrix[0][1]*matrix[1][0])
@@ -20,7 +20,6 @@ def inverseOf2x2Matrix(matrix):
 
 def inverseOf3x3Matrix(matrix):
     #matrix is given as [[a,b,c],[d,e,f],[g,h,i]]
-    print("matrix: ", matrix)
     inverseMatrix = [[0,0,0],[0,0,0],[0,0,0]]
     determinant = determinantOf3x3Matrix(matrix)
     reciprocalOfDeterminant = 1/determinant
@@ -52,8 +51,9 @@ def inverseOf3x3Matrix(matrix):
     return inverseMatrix
 
 def decryption(ciphertext,key):
+    lengthOfCiphertext = len(ciphertext)
     key = listOfUnicodes(key)
-
+    
     def keyToMatrix(key):
         if len(key)%4 == 0:
             matrixKey = separateIntoListOf2x2Matrices(key)
@@ -65,38 +65,33 @@ def decryption(ciphertext,key):
             nextMultipleOf9 = len(ciphertext) + (9 - len(ciphertext)%9)
             return separateIntoListOf3x3Matrices(key[:nextMultipleOf9])
     
-    # sumOfElements = 0
-    # for i in range(len(ciphertext)):
-    #     for j in range(len(ciphertext[i])):
-    #         for k in range(len(ciphertext[i][j])):
-    #             sumOfElements += 1
-    # key = key[:sumOfElements]
-    
-    lengthOfCiphertext = len(ciphertext)
-
-    key = key[:lengthOfCiphertext]
     keyMatrix = keyToMatrix(key)
 
-    print("keyMatrix: ", keyMatrix)
-
     inverseKey = []
-    for i in range(len(ciphertext)):
+    for i in range(len(keyMatrix)):
         if lengthOfCiphertext%4 == 0:
             inverseKey.append(inverseOf2x2Matrix(keyMatrix[i]))
         else:
             inverseKey.append(inverseOf3x3Matrix(keyMatrix[i]))
 
+    result = multiplyingMatrices(ciphertext,inverseKey)
+
     ciphertextList = []
     keyMatrixList = []
-    for i in range(len(keyMatrix)):
-        for j in range(len(keyMatrix)):
-            for k in range(len(keyMatrix)):
-                keyMatrixList.append(keyMatrix[i][j][k])
+    
+    for i in range(len(ciphertext)):
+        for j in range(len(ciphertext[i])):
+            for k in range(len(ciphertext[i][j])):
                 ciphertextList.append(ciphertext[i][j][k])
 
+    for i in range(len(key)):
+        keyMatrixList.append(key[i])
+
+    
     XORciphertext = XORList(ciphertextList,keyMatrixList)
-    ciphertext = []
     for i in range(len(XORciphertext)):
         XORciphertext[i] = chr(XORciphertext[i])
+
     ciphertext = ''.join(XORciphertext)
+    print("ciphertext: ", ciphertext)
     return ciphertext

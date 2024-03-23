@@ -106,19 +106,22 @@ def encryption(plaintext,key,padded):
 
     separatedPlaintextList,separatedKeyList,padded = matrixOperableLists(XORPlaintextCodes,listOfKeyCodes,padded,originalLengthOfP)
 
+    print("\nseparatedPlaintextList: ",separatedPlaintextList)
+
     for i in range(len(separatedPlaintextList)):
         lengthOfList = len(separatedPlaintextList[i])
-        if lengthOfList == 4:
+        print("\nlengthOfList: ",lengthOfList)
+        if lengthOfList == 2:
             if is2x2MatrixSingular(separatedKeyList[i]) == False:
                 separatedPlaintextList[i] = multiplyingMatrices(separatedPlaintextList[i],separatedKeyList[i])
-            else:
-                keyGeneration(plaintext)
-        elif lengthOfList == 9:
+                print("yay")
+        elif lengthOfList == 3:
             if is3x3MatrixSingular(separatedKeyList[i]) == False:
                 separatedPlaintextList[i] = multiplyingMatrices(separatedPlaintextList[i],separatedKeyList[i])
-            else:
-                keyGeneration(plaintext)
-    separatedPlaintextList = json.dumps(separatedPlaintextList)
+                print("yay bozo")
+        else:
+            keyGeneration(plaintext)
+    # separatedPlaintextList = json.dumps(separatedPlaintextList)
     return separatedPlaintextList,padded
 
 def keyGeneration(password):
@@ -128,8 +131,8 @@ def keyGeneration(password):
             key = key[:nextMultipleOf9]
         elif len(ciphertext)%4 == 0 or len(ciphertext)%9 == 0:
             key = key[:len(ciphertext)]
+        return key
     
-    originalLengthOfPassword = len(password)
     print("\nPlease randomly type on the keyboard: (Press the \"tab\" key to submit)")
     DEK = randomGeneration()
     print("\nPlease randomly type on the keyboard again: (Press the \"tab\" key to submit)")
@@ -141,7 +144,8 @@ def keyGeneration(password):
 
     encryptedPassword,paddedPassword = encryption(password,DEK,paddedPassword)
     encryptedDEK, paddedDEK = encryption(DEK, KEK, paddedDEK)
-    print("\nencryptedPassword: ",encryptedPassword)
-    print("\nencryptedDEK: ",encryptedDEK)
-    print("\nKEK: ",KEK)
+    # print("\nencryptedPassword: ",encryptedPassword)
+    # print("\nencryptedDEK: ",encryptedDEK)
+    # print("\nDEK: ",DEK)
+    # print("\nKEK: ",KEK)
     return encryptedPassword,encryptedDEK,KEK,len(password),paddedPassword,paddedDEK
