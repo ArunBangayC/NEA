@@ -58,16 +58,22 @@ def multiplyingMatrices(matrix, multiplier):
         finalMatrix = []
         matrixSublist = matrix[a]
         multiplierSublist = multiplier[a]
+        
         for i in range(len(matrixSublist)):
             row = []
             for j in range(len(matrixSublist)):
                 row.append(0)
             finalMatrix.append(row)
-        for i in range(len(matrixSublist)):
-            for j in range(len(matrixSublist)):
-                for k in range(len(matrixSublist)):
-                    finalMatrix[i][j] += matrixSublist[i][k]*multiplierSublist[k][j]
+        #multiplies row by row then inserts into finalMatrix
+
+        for i in range(len(matrix)):
+            for j in range(len(matrix)):
+                for k in range(len(matrix)):
+                    for l in range(len(matrix)):
+                        finalMatrix[j][k] += matrix[i][j][k]*multiplier[k][l]
+
         endProduct.append(finalMatrix)
+
     return endProduct
 
 def is2x2MatrixSingular(matrix):

@@ -74,6 +74,8 @@ def decryption(ciphertext,key):
         else:
             inverseKey.append(inverseOf3x3Matrix(keyMatrix[i]))
 
+    print("ciphertext: ", ciphertext)
+    print("inverseKey: ", inverseKey)
     result = multiplyingMatrices(ciphertext,inverseKey)
 
     ciphertextList = []

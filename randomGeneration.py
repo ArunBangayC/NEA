@@ -19,18 +19,18 @@ def randomGeneration():
 
     def onRelease(key):
         #Stops the listener when enter is pressed
-        
+
         if key == keyboard.Key.tab:
             return False
 
-    
+
     #Starts the listener
     with keyboard.Listener(on_press=onPress, on_release=onRelease) as listener:
         listener.join()
 
     sumOfUnicodes = 0
     for key in recordedKeyPresses:
-        if hasattr(key, 'char'): #Checks if the key pressed is a character
+        if key is not None and hasattr(key, 'char'): #Checks if the key pressed is a character
             sumOfUnicodes += ord(key.char)
 
     productOfDigits = 1
