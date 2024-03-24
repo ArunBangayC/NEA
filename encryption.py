@@ -1,4 +1,3 @@
-import json
 from randomGeneration import randomGeneration
 
 def listOfUnicodes(parameter):
@@ -52,29 +51,23 @@ def matrixOperableLists(textList,keyList,padded,originalLengthOfP):
         keyList = separateIntoListOf3x3Matrices(keyList)
         return textList,keyList,padded
 
+
 def multiplyingMatrices(matrix, multiplier):
-    endProduct = []
-    for a in range(len(matrix)):
-        finalMatrix = []
-        matrixSublist = matrix[a]
-        multiplierSublist = multiplier[a]
-        
-        for i in range(len(matrixSublist)):
-            row = []
-            for j in range(len(matrixSublist)):
-                row.append(0)
-            finalMatrix.append(row)
-        #multiplies row by row then inserts into finalMatrix
+    finalMatrix = []
 
-        for i in range(len(matrix)):
-            for j in range(len(matrix)):
-                for k in range(len(matrix)):
-                    for l in range(len(matrix)):
-                        finalMatrix[j][k] += matrix[i][j][k]*multiplier[k][l]
+    for i in range(len(matrix)):
+        row = []
+        for j in range(len(matrix)):
+            row.append(0)
+        finalMatrix.append(row)
+    
+    for i in range(len(matrix)):
+        for j in range(len(matrix)):
+            for k in range(len(matrix)):
+                finalMatrix[i][j] += matrix[i][k]*multiplier[k][j]
 
-        endProduct.append(finalMatrix)
+    return finalMatrix
 
-    return endProduct
 
 def is2x2MatrixSingular(matrix):
     #matrix is in form [[a,b],[c,d]]
@@ -112,23 +105,19 @@ def encryption(plaintext,key,padded):
 
     separatedPlaintextList,separatedKeyList,padded = matrixOperableLists(XORPlaintextCodes,listOfKeyCodes,padded,originalLengthOfP)
 
-    print("\nseparatedPlaintextList: ",separatedPlaintextList)
-
+    encryptedMatrix = []
     for i in range(len(separatedPlaintextList)):
         lengthOfList = len(separatedPlaintextList[i])
-        print("\nlengthOfList: ",lengthOfList)
         if lengthOfList == 2:
             if is2x2MatrixSingular(separatedKeyList[i]) == False:
-                separatedPlaintextList[i] = multiplyingMatrices(separatedPlaintextList[i],separatedKeyList[i])
-                print("yay")
+                encryptedMatrix.append(multiplyingMatrices(separatedPlaintextList[i],separatedKeyList[i]))
         elif lengthOfList == 3:
             if is3x3MatrixSingular(separatedKeyList[i]) == False:
-                separatedPlaintextList[i] = multiplyingMatrices(separatedPlaintextList[i],separatedKeyList[i])
-                print("yay bozo")
+                encryptedMatrix.append(multiplyingMatrices(separatedPlaintextList[i],separatedKeyList[i]))
         else:
             keyGeneration(plaintext)
-    # separatedPlaintextList = json.dumps(separatedPlaintextList)
-    return separatedPlaintextList,padded
+    # encryptedMatrix = json.dumps(separatedPlaintextList)
+    return encryptedMatrix,padded
 
 def keyGeneration(password):
     def settingLengthOfKeys(ciphertext,key):
@@ -147,11 +136,8 @@ def keyGeneration(password):
     paddedDEK = False
     DEK = settingLengthOfKeys(password,DEK)
     KEK = settingLengthOfKeys(DEK,KEK)
-
+    print("DEK: ",DEK)
     encryptedPassword,paddedPassword = encryption(password,DEK,paddedPassword)
     encryptedDEK, paddedDEK = encryption(DEK, KEK, paddedDEK)
-    # print("\nencryptedPassword: ",encryptedPassword)
-    # print("\nencryptedDEK: ",encryptedDEK)
-    # print("\nDEK: ",DEK)
-    # print("\nKEK: ",KEK)
+
     return encryptedPassword,encryptedDEK,KEK,len(password),paddedPassword,paddedDEK

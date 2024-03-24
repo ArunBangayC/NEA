@@ -1,4 +1,5 @@
 import json
+from decimal import *
 from encryption import listOfUnicodes, separateIntoListOf2x2Matrices, separateIntoListOf3x3Matrices, XORList, multiplyingMatrices
 
 def determinantOf2x2Matrix(matrix):
@@ -74,26 +75,29 @@ def decryption(ciphertext,key):
         else:
             inverseKey.append(inverseOf3x3Matrix(keyMatrix[i]))
 
-    print("ciphertext: ", ciphertext)
-    print("inverseKey: ", inverseKey)
-    result = multiplyingMatrices(ciphertext,inverseKey)
+    resultMatrix = []
+    for i in range(len(ciphertext)):
+        resultMatrix.append(multiplyingMatrices(ciphertext[i],inverseKey[i]))
 
     ciphertextList = []
     keyMatrixList = []
     
-    for i in range(len(ciphertext)):
-        for j in range(len(ciphertext[i])):
-            for k in range(len(ciphertext[i][j])):
-                ciphertextList.append(ciphertext[i][j][k])
+    for i in range(len(resultMatrix)):
+        for j in range(len(resultMatrix[i])):
+            for k in range(len(resultMatrix[i][j])):
+                ciphertextList.append(round(resultMatrix[i][j][k]))
 
     for i in range(len(key)):
         keyMatrixList.append(key[i])
 
+    # XORciphertext = XORList(ciphertextList,keyMatrixList)
+
+    XORciphertext = []
+    for i in range(len(ciphertextList)):
+        XORciphertext.append(ciphertextList[i] ^ keyMatrixList[i])
     
-    XORciphertext = XORList(ciphertextList,keyMatrixList)
     for i in range(len(XORciphertext)):
         XORciphertext[i] = chr(XORciphertext[i])
 
     ciphertext = ''.join(XORciphertext)
-    print("ciphertext: ", ciphertext)
     return ciphertext

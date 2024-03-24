@@ -1,6 +1,6 @@
 from encryption import keyGeneration
 from decryption import decryption
 
-encryptedPassword,encryptedDEK,KEK,originalLengthOfPassword,paddedPassword,paddedDEK = keyGeneration("Secure2345")
+encryptedPassword,encryptedDEK,KEK,originalLengthOfPassword,paddedPassword,paddedDEK = keyGeneration("Secure2345678")
 DEK = decryption(encryptedDEK,KEK)
-print(decryption(encryptedPassword,DEK))
+print("ciphertext: ",decryption(encryptedPassword,DEK))

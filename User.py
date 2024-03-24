@@ -47,7 +47,9 @@ class User():
         KEKInfo = cursor.fetchone()
 
         decryptedDEK = decryption(itemInfo[3],KEKInfo[0])
-        print(decryptedDEK)
+        password = decryption(itemInfo[2],decryptedDEK)
+
+        print("password: ",password)
 
         # except:
         #     print("\nIt looks like we couldn't find your passwords... Please try again.")

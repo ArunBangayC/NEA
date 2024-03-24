@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS "Password Vault"(
     "encryptedDEK" VARCHAR(255) NOT NULL,
     "originalLengthOfPassword" INTEGER NOT NULL,
     "padded" BOOLEAN NOT NULL,
-    FOREIGN KEY ("userID") REFERENCES "Users"("userID")
+    FOREIGN KEY ("userID") REFERENCES "Logins"("userID")
 );
 
 CREATE TABLE IF NOT EXISTS "KEKs"(
@@ -34,5 +34,5 @@ CREATE TABLE IF NOT EXISTS "Access Logs"(
     "userID" INTEGER NOT NULL,
     "loginTime" DATETIME NOT NULL,
     "logoutTime" DATETIME,
-    FOREIGN KEY ("userID") REFERENCES "Users"("userID")
+    FOREIGN KEY ("userID") REFERENCES "Logins"("userID")
 )
