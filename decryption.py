@@ -52,6 +52,7 @@ def inverseOf3x3Matrix(matrix):
     return inverseMatrix
 
 def decryption(ciphertext,key):
+    ciphertext = json.loads(ciphertext)
     lengthOfCiphertext = len(ciphertext)
     key = listOfUnicodes(key)
     
@@ -75,29 +76,33 @@ def decryption(ciphertext,key):
         else:
             inverseKey.append(inverseOf3x3Matrix(keyMatrix[i]))
 
+    print("ciphertext: ",ciphertext)
+    print("inverseKey: ",inverseKey)
+
     resultMatrix = []
     for i in range(len(ciphertext)):
         resultMatrix.append(multiplyingMatrices(ciphertext[i],inverseKey[i]))
 
-    ciphertextList = []
+    print("resultMatrixList: ",resultMatrix)
+
+    resultMatrixList = []
     keyMatrixList = []
     
     for i in range(len(resultMatrix)):
         for j in range(len(resultMatrix[i])):
             for k in range(len(resultMatrix[i][j])):
-                ciphertextList.append(round(resultMatrix[i][j][k]))
+                resultMatrixList.append(round(resultMatrix[i][j][k]))
 
     for i in range(len(key)):
         keyMatrixList.append(key[i])
 
-    # XORciphertext = XORList(ciphertextList,keyMatrixList)
+    XORciphertext = XORList(resultMatrixList,keyMatrixList)
 
-    XORciphertext = []
-    for i in range(len(ciphertextList)):
-        XORciphertext.append(ciphertextList[i] ^ keyMatrixList[i])
+    print("XORciphertext: ",XORciphertext)
     
     for i in range(len(XORciphertext)):
+        print("XORciphertext[i]: ",XORciphertext[i])
         XORciphertext[i] = chr(XORciphertext[i])
 
-    ciphertext = ''.join(XORciphertext)
-    return ciphertext
+    plaintext = ''.join(XORciphertext)
+    return plaintext

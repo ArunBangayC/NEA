@@ -1,3 +1,4 @@
+import json
 from randomGeneration import randomGeneration
 
 def listOfUnicodes(parameter):
@@ -87,11 +88,8 @@ def is3x3MatrixSingular(matrix):
     
 def XORList(list,key):
     XORtext = []
-    try:
-        for i in range(len(list)):
-            XORtext.append(list[i] ^ key[i])
-    except:
-        pass
+    for i in range(len(list)):
+        XORtext.append(list[i] ^ key[i])
     return XORtext
 
 def encryption(plaintext,key,padded):
@@ -102,6 +100,9 @@ def encryption(plaintext,key,padded):
     XORKeyCodes = equalLength(listOfKeyCodes,originalLengthOfP)
 
     XORPlaintextCodes = XORList(listOfPlaintextCodes,XORKeyCodes)
+
+    # print("\nXORPlaintextCodes: ",XORPlaintextCodes)
+    # print("\nXORKeyCodes: ",XORKeyCodes)
 
     separatedPlaintextList,separatedKeyList,padded = matrixOperableLists(XORPlaintextCodes,listOfKeyCodes,padded,originalLengthOfP)
 
@@ -116,7 +117,7 @@ def encryption(plaintext,key,padded):
                 encryptedMatrix.append(multiplyingMatrices(separatedPlaintextList[i],separatedKeyList[i]))
         else:
             keyGeneration(plaintext)
-    # encryptedMatrix = json.dumps(separatedPlaintextList)
+    encryptedMatrix = json.dumps(separatedPlaintextList)
     return encryptedMatrix,padded
 
 def keyGeneration(password):
@@ -136,8 +137,6 @@ def keyGeneration(password):
     paddedDEK = False
     DEK = settingLengthOfKeys(password,DEK)
     KEK = settingLengthOfKeys(DEK,KEK)
-    print("DEK: ",DEK)
     encryptedPassword,paddedPassword = encryption(password,DEK,paddedPassword)
     encryptedDEK, paddedDEK = encryption(DEK, KEK, paddedDEK)
-
     return encryptedPassword,encryptedDEK,KEK,len(password),paddedPassword,paddedDEK
