@@ -1,4 +1,3 @@
-import json
 from randomGeneration import randomGeneration
 
 def listOfUnicodes(parameter):
@@ -92,6 +91,14 @@ def XORList(list,key):
         XORtext.append(list[i] ^ key[i])
     return XORtext
 
+def settingLengthOfKeys(ciphertext,key):
+        if len(ciphertext)%4 != 0 and len(ciphertext)%9 != 0:
+            nextMultipleOf9 = len(ciphertext) + (9 - len(ciphertext)%9)
+            key = key[:nextMultipleOf9]
+        elif len(ciphertext)%4 == 0 or len(ciphertext)%9 == 0:
+            key = key[:len(ciphertext)]
+        return key
+
 def encryption(plaintext,key,padded):
     listOfPlaintextCodes = listOfUnicodes(plaintext)
     listOfKeyCodes = listOfUnicodes(key)
@@ -100,9 +107,6 @@ def encryption(plaintext,key,padded):
     XORKeyCodes = equalLength(listOfKeyCodes,originalLengthOfP)
 
     XORPlaintextCodes = XORList(listOfPlaintextCodes,XORKeyCodes)
-
-    # print("\nXORPlaintextCodes: ",XORPlaintextCodes)
-    # print("\nXORKeyCodes: ",XORKeyCodes)
 
     separatedPlaintextList,separatedKeyList,padded = matrixOperableLists(XORPlaintextCodes,listOfKeyCodes,padded,originalLengthOfP)
 
@@ -117,18 +121,9 @@ def encryption(plaintext,key,padded):
                 encryptedMatrix.append(multiplyingMatrices(separatedPlaintextList[i],separatedKeyList[i]))
         else:
             keyGeneration(plaintext)
-    encryptedMatrix = json.dumps(separatedPlaintextList)
     return encryptedMatrix,padded
 
 def keyGeneration(password):
-    def settingLengthOfKeys(ciphertext,key):
-        if len(ciphertext)%4 != 0 and len(ciphertext)%9 != 0:
-            nextMultipleOf9 = len(ciphertext) + (9 - len(ciphertext)%9)
-            key = key[:nextMultipleOf9]
-        elif len(ciphertext)%4 == 0 or len(ciphertext)%9 == 0:
-            key = key[:len(ciphertext)]
-        return key
-    
     print("\nPlease randomly type on the keyboard: (Press the \"tab\" key to submit)")
     DEK = randomGeneration()
     print("\nPlease randomly type on the keyboard again: (Press the \"tab\" key to submit)")
