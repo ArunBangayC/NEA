@@ -23,66 +23,75 @@ class User():
                 break
 
         infoToUpdate = input("\nWould you like to update your item name, username, or password? (I, U, P): ")
-        if infoToUpdate.lower() == "i":
-            try:
-                while True:
-                    newItemName = input("\nPlease enter the new item name: ")
-                    correctItemName = input("\nIs this the correct item name? (Y or N): ")
-                    if correctItemName.lower() == "y" or correctItemName == "":
-                        break
-                    else:
-                        continue
-                updateItemName = """
-                UPDATE "Password Vault"
-                SET itemName = ?
-                WHERE itemID = ?"""
-                cursor.execute(updateItemName,(newItemName,itemID))
-                print("\nYou have successfully updated the item name!")
-                return True
-            except:
-                print("\nIt looks something went wrong... Please try again.")
-                return False
-        
-        elif infoToUpdate.lower() == "u":
-            try:
-                while True:
-                        newUsername = input("\nPlease enter the new username: ")
-                        correctUserame = input("\nIs this the correct username? (Y or N): ")
-                        if correctUserame.lower() == "y" or correctUserame == "":
+        while True:
+            if infoToUpdate.lower() == "i":
+                try:
+                    while True:
+                        newItemName = input("\nPlease enter the new item name: ")
+                        correctItemName = input("\nIs this the correct item name? (Y or N): ")
+                        if correctItemName.lower() == "y" or correctItemName == "":
                             break
                         else:
                             continue
-                updateUsername = """
-                UPDATE "Password Vault"
-                SET username = ?
-                WHERE itemID = ?"""
-                cursor.execute(updateUsername,(newUsername,itemID))
-                print("\nYou have successfully updated the username!")
-                return True
-            except:
-                print("\nIt looks something went wrong... Please try again.")
-                return False
-        
-        ########### NEED TO REDO encryption
-        elif infoToUpdate.lower() == "p":
-            try:
-                while True:
-                        newPassword = input("\nPlease enter the new password: ")
-                        correctPassword = input("\nIs this the correct password? (Y or N): ")
-                        if correctPassword.lower() == "y" or correctPassword == "":
-                            break
-                        else:
-                            continue
-                updatePassword = """
-                UPDATE "Password Vault"
-                SET password = ?
-                WHERE itemID = ?"""
-                cursor.execute(updateUsername,(newUsername,itemID))
-                print("\nYou have successfully updated the username!")
-                return True
-            except:
-                print("\nIt looks something went wrong... Please try again.")
-                return False
+                    updateItemName = """
+                    UPDATE "Password Vault"
+                    SET itemName = ?
+                    WHERE itemID = ?"""
+                    cursor.execute(updateItemName,(newItemName,itemID))
+                    print("\nYou have successfully updated the item name!")
+                    return True
+                except:
+                    print("\nIt looks something went wrong... Please try again.")
+                    return False
+            
+            elif infoToUpdate.lower() == "u":
+                try:
+                    while True:
+                            newUsername = input("\nPlease enter the new username: ")
+                            correctUserame = input("\nIs this the correct username? (Y or N): ")
+                            if correctUserame.lower() == "y" or correctUserame == "":
+                                break
+                            else:
+                                continue
+                    updateUsername = """
+                    UPDATE "Password Vault"
+                    SET username = ?
+                    WHERE itemID = ?"""
+                    cursor.execute(updateUsername,(newUsername,itemID))
+                    print("\nYou have successfully updated the username!")
+                    return True
+                except:
+                    print("\nIt looks something went wrong... Please try again.")
+                    return False
+            
+            elif infoToUpdate.lower() == "p":
+                try:
+                    while True:
+                            newPassword = input("\nPlease enter the new password: ")
+                            correctPassword = input("\nIs this the correct password? (Y or N): ")
+                            if correctPassword.lower() == "y" or correctPassword == "":
+                                break
+                            else:
+                                continue
+                    encryptedPassword,encryptedDEK,KEK,originalLengthOfPassword,paddedPassword,paddedDEK = keyGeneration(newPassword)
+                    updatePassword = """
+                    UPDATE "Password Vault"
+                    SET password = ?, encryptedDEK = ?, originalLengthOfPassword = ?, padded = ?
+                    WHERE itemID = ?"""
+                    updateKEK = """
+                    UPDATE "KEKs"
+                    SET KEK = ?, padded = ?
+                    WHERE itemID = ?"""
+                    cursor.execute(updatePassword,(encryptedPassword,encryptedDEK,originalLengthOfPassword,paddedPassword,itemID))
+                    cursor.execute(updateKEK,(KEK,paddedDEK,itemID))
+                    print("\nYou have successfully updated the password!")
+                    return True
+                except:
+                    print("\nIt looks something went wrong... Please try again.")
+                    return False
+            else:
+                print("\nIt looks like you didn't enter an option... Please try again.")
+                continue
 
 
 
