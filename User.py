@@ -1,4 +1,3 @@
-import json
 from tabulate import tabulate
 from encryption import keyGeneration
 from decryption import decryption 
@@ -73,17 +72,17 @@ class User():
                                 break
                             else:
                                 continue
-                    encryptedPassword,encryptedDEK,KEK,originalLengthOfPassword,paddedPassword,paddedDEK = keyGeneration(newPassword)
+                    encryptedPassword,encryptedDEK,KEK,originalLengthOfPassword = keyGeneration(newPassword)
                     updatePassword = """
                     UPDATE "Password Vault"
-                    SET password = ?, encryptedDEK = ?, originalLengthOfPassword = ?, padded = ?
+                    SET password = ?, encryptedDEK = ?
                     WHERE itemID = ?"""
                     updateKEK = """
                     UPDATE "KEKs"
-                    SET KEK = ?, padded = ?
+                    SET KEK = ?
                     WHERE itemID = ?"""
-                    cursor.execute(updatePassword,(encryptedPassword,encryptedDEK,originalLengthOfPassword,paddedPassword,itemID))
-                    cursor.execute(updateKEK,(KEK,paddedDEK,itemID))
+                    cursor.execute(updatePassword,(encryptedPassword,encryptedDEK,itemID))
+                    cursor.execute(updateKEK,(KEK,itemID))
                     print("\nYou have successfully updated the password!")
                     return True
                 except:
@@ -120,7 +119,7 @@ class User():
                     break
             
             grabItemInfo = """
-            SELECT itemName,username,encryptedPassword,encryptedDEK,originalLengthOfPassword,padded
+            SELECT itemName,username,encryptedPassword,encryptedDEK
             FROM "Password Vault"
             WHERE itemID = ?"""
 
@@ -128,7 +127,7 @@ class User():
             itemInfo = cursor.fetchone()
             
             grabKEKInfo = """
-            SELECT KEK,padded
+            SELECT KEK
             FROM "KEKs"
             WHERE itemID = ?"""
             cursor.execute(grabKEKInfo,(itemID,))
@@ -136,9 +135,6 @@ class User():
 
             encryptedPassword = itemInfo[2]
             encryptedDEK = itemInfo[3]
-
-            encryptedDEK = json.loads(encryptedDEK)
-            encryptedPassword = json.loads(encryptedPassword)
 
             decryptedDEK = decryption(encryptedDEK,KEKInfo[0])
             password = decryption(encryptedPassword,decryptedDEK)
@@ -154,18 +150,16 @@ class User():
     def addItem(self,itemName,username,password,cursor):
         try:
             userID = self.__userID(cursor)
-            encryptedPassword,encryptedDEK,KEK,originalLengthOfPassword,paddedPassword,paddedDEK = keyGeneration(password)
-            encryptedPassword = json.dumps(encryptedPassword)
-            encryptedDEK = json.dumps(encryptedDEK)
+            encryptedPassword,encryptedDEK,KEK = keyGeneration(password)
             addItemToPasswordVault = """
-                INSERT INTO "Password Vault" (userID,itemName,username,encryptedPassword,encryptedDEK,originalLengthOfPassword,padded)
-                VALUES (?,?,?,?,?,?,?)"""
-            cursor.execute(addItemToPasswordVault, (userID,itemName,username,encryptedPassword,encryptedDEK,originalLengthOfPassword,paddedPassword))
+                INSERT INTO "Password Vault" (userID,itemName,username,encryptedPassword,encryptedDEK,originalLengthOfPassword)
+                VALUES (?,?,?,?,?)"""
+            cursor.execute(addItemToPasswordVault, (userID,itemName,username,encryptedPassword,encryptedDEK))
             itemID = self.__itemID(cursor)
             addItemToKEKs = """
-                INSERT INTO "KEKs"(itemID,KEK,padded)
+                INSERT INTO "KEKs"(itemID,KEK)
                 VALUES (?,?,?)"""
-            cursor.execute(addItemToKEKs,(itemID,KEK,paddedDEK))
+            cursor.execute(addItemToKEKs,(itemID,KEK))
             print("\nYou have successfully added a new item!")
             return True
         except:

@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS "Password Vault"(
     "encryptedDEK" VARCHAR(255) NOT NULL,
     "originalLengthOfPassword" INTEGER NOT NULL,
     "padded" BOOLEAN NOT NULL,
+    "matrixLengths" INTEGER NOT NULL,
     FOREIGN KEY ("userID") REFERENCES "Logins"("userID")
 );
 

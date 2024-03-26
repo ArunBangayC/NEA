@@ -50,32 +50,43 @@ def inverseOf3x3Matrix(matrix):
     return inverseMatrix
 
 def decryption(ciphertext,key):
-    lengthOfCiphertext = len(ciphertext)
-    key = listOfUnicodes(key)
-    
-    def keyToMatrix(key):
-        if len(key)%4 == 0:
-            matrixKey = separateIntoListOf2x2Matrices(key)
+
+    def listToMatrix(list,length):
+        if length%4 == 0:
+            matrixKey = separateIntoListOf2x2Matrices(list)
             return matrixKey
-        elif len(key)%9 == 0:
-            matrixKey = separateIntoListOf3x3Matrices(key)
+        elif length%9 == 0:
+            matrixKey = separateIntoListOf3x3Matrices(list)
             return matrixKey
         else:
-            nextMultipleOf9 = len(ciphertext) + (9 - len(ciphertext)%9)
+            nextMultipleOf9 = length + (9 - (length%9))
             return separateIntoListOf3x3Matrices(key[:nextMultipleOf9])
+
+    # Addition for 3NF
+    ciphertext = ciphertext.split("0x")
+    ciphertext.pop(0)
+
+    decimalNumbers = []
+    for number in ciphertext:
+        decimalNumbers.append(int(number,16))
+
+    decimalMatrix = listToMatrix(decimalNumbers,len(decimalNumbers))
+
+    lengthOfCiphertext = len(decimalNumbers)
+    key = listOfUnicodes(key)
     
-    keyMatrix = keyToMatrix(key)
+    keyMatrix = listToMatrix(key,lengthOfCiphertext)
 
     inverseKey = []
     for i in range(len(keyMatrix)):
-        if lengthOfCiphertext%4 == 0:
+        if len(keyMatrix[i])%2 == 0:
             inverseKey.append(inverseOf2x2Matrix(keyMatrix[i]))
         else:
             inverseKey.append(inverseOf3x3Matrix(keyMatrix[i]))
 
     resultMatrix = []
-    for i in range(len(ciphertext)):
-        resultMatrix.append(multiplyingMatrices(ciphertext[i],inverseKey[i]))
+    for i in range(len(decimalMatrix)):
+        resultMatrix.append(multiplyingMatrices(decimalMatrix[i],inverseKey[i]))
 
     resultMatrixList = []
     keyMatrixList = []

@@ -1,3 +1,3 @@
-from datatime import datetime
+from datetime import datetime
 
 def addToAccessLog(functionApplied,itemID,cursor):
