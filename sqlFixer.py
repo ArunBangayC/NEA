@@ -7,7 +7,7 @@ deleteTables = """
 DROP TABLE IF EXISTS "Logins";
 DROP TABLE IF EXISTS "Password Vault";
 DROP TABLE IF EXISTS "KEKs";
-DROP TABLE IF EXISTS "AccessLogs"
+DROP TABLE IF EXISTS "Access Logs"
 """
 cursor.executescript(deleteTables)
 connectionToDatabase.commit()

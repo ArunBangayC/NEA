@@ -33,7 +33,10 @@ CREATE TABLE IF NOT EXISTS "KEKs"(
 
 CREATE TABLE IF NOT EXISTS "Access Logs"( 
     "userID" INTEGER NOT NULL,
-    "loginTime" DATETIME NOT NULL,
-    "logoutTime" DATETIME,
-    FOREIGN KEY ("userID") REFERENCES "Logins"("userID")
+    "itemID" INTEGER NOT NULL,
+    "dateCreated" DATETIME NOT NULL,
+    "lastAccessed" DATETIME NOT NULL,
+    "functionApplied" DATETIME NOT NULL,
+    FOREIGN KEY ("userID") REFERENCES "Logins"("userID"),
+    FOREIGN KEY ("itemID") REFERENCES "PasswordVault"("itemID")
 )

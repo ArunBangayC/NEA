@@ -178,7 +178,7 @@ class User():
     def __userID(self,cursor):
         getUserID = """
             SELECT userID
-            FROM Logins
+            FROM "Logins"
             WHERE masterUsername = ?"""
         cursor.execute(getUserID,(self.__username,))
         return cursor.fetchone()[0]
@@ -199,7 +199,7 @@ class User():
                 print("\nYou have successfully logged in!")
                 grabUserInfo = """
                 SELECT userID, firstName, lastName
-                FROM Logins
+                FROM "Logins"
                 WHERE masterUsername = ? AND masterHashedPassword = ?
                 """
                 userInfo = cursor.execute(grabUserInfo, (username, hashedPassword))
@@ -232,14 +232,14 @@ class NewUser(User):
         self.__lastName = lastName
     def createNewUser(self,cursor):
         addUserToDatabase = """
-        INSERT INTO Logins(firstName,lastName,masterUsername,masterHashedPassword)
+        INSERT INTO "Logins"(firstName,lastName,masterUsername,masterHashedPassword)
         VALUES (?,?,?,?)
         """
         cursor.execute(addUserToDatabase,(self.__firstName,self.__lastName,self._User__username,self._User__hashedPassword))
         print("\nYou have successfully added a new user!")
         grabUserInfo = """
         SELECT userID
-        FROM Logins
+        FROM "Logins"
         WHERE firstName = ? AND lastName = ?
         """
         userID = cursor.execute(grabUserInfo,(self.__firstName,self.__lastName))
