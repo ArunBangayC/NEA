@@ -4,54 +4,54 @@ from randomGeneration import randomGeneration
 
 strongPasswordInfomation = "I recommend a password that is at least 8 characters long with a mix of letters, numbers and special characters."
 
-def addUsername():
-    def addPassword():
+def addPassword():
         password = getpass.getpass("\nPlease enter your password here (you won't be able to see it!):    ")
         correctPassword = input("\nWould you like to submit this password? (Y): ")
         if correctPassword.lower() == "y" or correctPassword == "":
             return password
         else:
             return addPassword()
-        
+
+def addUsername():
     username = input("\nPlease enter your username/email here:   ")
     correctUsername = input("\nIs this the correct username? (Y):  ")
 
-    if correctUsername.lower() == "y" or correctUsername == "":
-        optionForRandomGeneration = input("\nWould you like to randomly generate a password? (Y or N): ")
-        while True:
-            if optionForRandomGeneration.lower() == "y" or optionForRandomGeneration == "":
-                print("\nPlease randomly type on the keyboard: (Press the \"tab\" key to submit)")
-                randomlyGeneratedPassword = randomGeneration()
-                pressEnter = input("\nPress enter to submit your password: ")
-                if pressEnter == "":
-                    lengthOfRGPassword = 0
-                    for i in range(len(randomlyGeneratedPassword)-1,0,-1):
-                        if not str(randomlyGeneratedPassword[i]).isdigit():
-                            lengthOfRGPassword = str(i)
-                            break
-                    desriredLengthOfRGPassword = input("\nHow long would you like your password to be? (up to "+str(lengthOfRGPassword)+"): ")
-                    password = randomlyGeneratedPassword[:int(desriredLengthOfRGPassword)]
-                    print("\nHere is your password:"+password+"\n"+strongPasswordInfomation)
-                    userApproval = input("\nWould you like to submit this password? (Y): ")
-                    if userApproval.lower() == "y" or userApproval == "":
-                        return username,password
+    try:
+        if correctUsername.lower() == "y" or correctUsername == "":
+            optionForRandomGeneration = input("\nWould you like to randomly generate a password? (Y or N): ")
+            while True:
+                if optionForRandomGeneration.lower() == "y" or optionForRandomGeneration == "":
+                    print("\nPlease randomly type on the keyboard: (Press the \"tab\" key to submit)")
+                    randomlyGeneratedPassword = randomGeneration()
+                    pressEnter = input("\nPress enter to submit your password: ")
+                    if pressEnter == "":
+                        lengthOfRGPassword = 0
+                        for i in range(len(randomlyGeneratedPassword)-1,0,-1):
+                            if not str(randomlyGeneratedPassword[i]).isdigit():
+                                lengthOfRGPassword = str(i)
+                                break
+                        desriredLengthOfRGPassword = input("\nHow long would you like your password to be? (up to "+str(lengthOfRGPassword)+"): ")
+                        password = randomlyGeneratedPassword[:int(desriredLengthOfRGPassword)]
+                        print("\nHere is your password:"+password+"\n"+strongPasswordInfomation)
+                        userApproval = input("\nWould you like to submit this password? (Y): ")
+                        if userApproval.lower() == "y" or userApproval == "":
+                            return username,password
+                        else:
+                            continue
                     else:
-                        continue
-                else:
-                    return addUsername()
+                        return addUsername()
 
-            elif optionForRandomGeneration.lower() == "n":
-                password = addPassword()
-                return username,password
-            
-            else:
-                print("\nHmmmm, that didn't seem to work... Try again.")
-                return addUsername()
+                elif optionForRandomGeneration.lower() == "n":
+                    password = addPassword()
+                    return username,password
+    except:
+        print("\nHmmmm, that didn't seem to work... Try again.")
+        return addUsername()
         
 def addNewUser(conn,cursor):
     fullName = (input("\nPlease enter your first and last name here:  ")).split()
     correctName= input("\nIs this the correct name? (Y):  ")
-    if len(fullName)==2 and correctName.lower() == "y" or "":
+    if len(fullName)==2 and correctName.lower() == "y" or correctName.lower() =="":
         username,password = addUsername()
         firstName = fullName.pop(0)
         lastName = fullName.pop(0)

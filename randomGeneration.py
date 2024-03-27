@@ -31,7 +31,10 @@ def randomGeneration():
     sumOfUnicodes = 0
     for key in recordedKeyPresses:
         if key is not None and hasattr(key, 'char'): #Checks if the key pressed is a character
-            sumOfUnicodes += ord(key.char)
+            try:
+                sumOfUnicodes += ord(key.char)
+            except:
+                continue
 
     productOfDigits = 1
     for t in keyPressTimes:

@@ -1,6 +1,9 @@
+import getpass
 from tabulate import tabulate
+from accessLog import addToAccessLogs
+from randomGeneration import randomGeneration
 from encryption import keyGeneration
-from decryption import decryption 
+from decryption import decryption
 
 class User():
     def __init__(self,username,password):
@@ -38,6 +41,7 @@ class User():
                     WHERE itemID = ?"""
                     cursor.execute(updateItemName,(newItemName,itemID))
                     print("\nYou have successfully updated the item name!")
+                    addToAccessLogs(("updatedNameFor"+itemToUpdate+"To"+newItemName),userID,itemID,cursor)
                     return True
                 except:
                     print("\nIt looks something went wrong... Please try again.")
@@ -58,6 +62,7 @@ class User():
                     WHERE itemID = ?"""
                     cursor.execute(updateUsername,(newUsername,itemID))
                     print("\nYou have successfully updated the username!")
+                    addToAccessLogs(("updatedUsernameFor"+itemToUpdate),userID,itemID,cursor)
                     return True
                 except:
                     print("\nIt looks something went wrong... Please try again.")
@@ -66,25 +71,65 @@ class User():
             elif infoToUpdate.lower() == "p":
                 try:
                     while True:
-                            newPassword = input("\nPlease enter the new password: ")
-                            correctPassword = input("\nIs this the correct password? (Y or N): ")
-                            if correctPassword.lower() == "y" or correctPassword == "":
-                                break
-                            else:
-                                continue
-                    encryptedPassword,encryptedDEK,KEK,originalLengthOfPassword = keyGeneration(newPassword)
-                    updatePassword = """
-                    UPDATE "Password Vault"
-                    SET password = ?, encryptedDEK = ?
-                    WHERE itemID = ?"""
-                    updateKEK = """
-                    UPDATE "KEKs"
-                    SET KEK = ?
-                    WHERE itemID = ?"""
-                    cursor.execute(updatePassword,(encryptedPassword,encryptedDEK,itemID))
-                    cursor.execute(updateKEK,(KEK,itemID))
-                    print("\nYou have successfully updated the password!")
-                    return True
+                        optionToRandomlyGenerate = input("\nWould you like to randomly generate a password? (Y or N): ")
+                        if optionToRandomlyGenerate.lower() == "y" or optionToRandomlyGenerate == "":
+                            while True:
+                                print("\nPlease randomly type on the keyboard: (Press the \"tab\" key to submit)")
+                                randomlyGeneratedPassword = randomGeneration()
+                                pressEnter = input("\nPress enter to submit your password: ")
+                                if pressEnter == "":
+                                    lengthOfRGPassword = 0
+                                    for i in range(len(randomlyGeneratedPassword)-1,0,-1):
+                                        if not str(randomlyGeneratedPassword[i]).isdigit():
+                                            lengthOfRGPassword = str(i)
+                                            break
+                                    desriredLengthOfRGPassword = input("\nHow long would you like your password to be? (up to "+str(lengthOfRGPassword)+"): ")
+                                    password = randomlyGeneratedPassword[:int(desriredLengthOfRGPassword)]
+                                    print("\nHere is your password:"+password)
+                                    userApproval = input("\nWould you like to submit this password? (Y): ")
+                                    if userApproval.lower() == "y" or userApproval == "":
+                                        encryptedPassword, encryptedDEK, KEK = keyGeneration(password)
+                                        updatePassword = """
+                                        UPDATE "Password Vault"
+                                        SET encryptedPassword = ?, encryptedDEK = ?
+                                        WHERE itemID = ?"""
+                                        updateKEK = """
+                                        UPDATE "KEKs"
+                                        SET KEK = ?
+                                        WHERE itemID = ?"""
+                                        cursor.execute(updatePassword,(encryptedPassword,encryptedDEK,itemID))
+                                        cursor.execute(updateKEK,(KEK,itemID))
+                                        print("\nYou have successfully updated the password!")
+                                        addToAccessLogs(("updatedPasswordFor"+itemToUpdate),userID,itemID,cursor)
+                                        return True
+                                    else:
+                                        continue
+                        elif optionToRandomlyGenerate.lower() == "n":
+                            while True:
+                                password = getpass.getpass("\nPlease enter your new password here : ")
+                                correctPassword = input("\nAre you sure you want to submit this password? (Y or N): ")
+                                if correctPassword.lower() == "y" or correctPassword == "":
+                                    encryptedPassword, encryptedDEK, KEK = keyGeneration(password)
+                                    updatePassword = """
+                                    UPDATE "Password Vault"
+                                    SET encryptedPassword = ?, encryptedDEK = ?
+                                    WHERE itemID = ?"""
+                                    updateKEK = """
+                                    UPDATE "KEKs"
+                                    SET KEK = ?
+                                    WHERE itemID = ?"""
+                                    cursor.execute(updatePassword,(encryptedPassword,encryptedDEK,itemID))
+                                    cursor.execute(updateKEK,(KEK,itemID))
+                                    print("\nYou have successfully updated the password!")
+                                    addToAccessLogs(("updatedPasswordFor"+itemToUpdate),userID,itemID,cursor)
+                                    return True
+                                else:
+                                    continue
+                        else:
+                            print("\nIt looks like you didn't enter an option... Please try again.")
+                            continue
+
+                                    
                 except:
                     print("\nIt looks something went wrong... Please try again.")
                     return False
@@ -111,38 +156,44 @@ class User():
 
             print(tabulate(itemNameAndUsername,headers=["Item Name:","Username:"],tablefmt="simple_grid"))
         
-            itemName = input("\nPlease enter the name of the application or website that you want to retrieve: ")
+            itemName = input("\nPlease enter the name of the application or website that you want to retrieve or enter \"update\"/\"U\" if you want to update information on an existing item: ")
 
-            for i in userInfo:
-                if (i[0]).lower() == itemName.lower():
-                    itemID = i[2]
-                    break
-            
-            grabItemInfo = """
-            SELECT itemName,username,encryptedPassword,encryptedDEK
-            FROM "Password Vault"
-            WHERE itemID = ?"""
+            if itemName.lower() != "update" and itemName.lower() != "u":
+                for i in userInfo:
+                    if (i[0]).lower() == itemName.lower():
+                        itemID = i[2]
+                        break
+                
+                grabItemInfo = """
+                SELECT itemName,username,encryptedPassword,encryptedDEK
+                FROM "Password Vault"
+                WHERE itemID = ?"""
 
-            cursor.execute(grabItemInfo,(itemID,))
-            itemInfo = cursor.fetchone()
-            
-            grabKEKInfo = """
-            SELECT KEK
-            FROM "KEKs"
-            WHERE itemID = ?"""
-            cursor.execute(grabKEKInfo,(itemID,))
-            KEKInfo = cursor.fetchone()
+                cursor.execute(grabItemInfo,(itemID,))
+                itemInfo = cursor.fetchone()
+                
+                grabKEKInfo = """
+                SELECT KEK
+                FROM "KEKs"
+                WHERE itemID = ?"""
+                cursor.execute(grabKEKInfo,(itemID,))
+                KEKInfo = cursor.fetchone()
 
-            encryptedPassword = itemInfo[2]
-            encryptedDEK = itemInfo[3]
+                encryptedPassword = itemInfo[2]
+                encryptedDEK = itemInfo[3]
 
-            decryptedDEK = decryption(encryptedDEK,KEKInfo[0])
-            password = decryption(encryptedPassword,decryptedDEK)
+                decryptedDEK = decryption(encryptedDEK,KEKInfo[0])
+                password = decryption(encryptedPassword,decryptedDEK)
 
-            print("\nItem Name: ",itemInfo[0])
-            print("Username: ",itemInfo[1])
-            print("Password: ",password)
-            return True
+                print("\nItem Name: ",itemInfo[0])
+                print("Username: ",itemInfo[1])
+                print("Password: ",password)
+
+                addToAccessLogs(("retrieveLoginFor"+itemInfo[0]),userID,itemID,cursor)
+                return True
+            else:
+                self.updateInfo(cursor)
+                return True
         except:
             print("\nIt looks like we couldn't find your passwords... Please try again.")
             return False
@@ -152,15 +203,16 @@ class User():
             userID = self.__userID(cursor)
             encryptedPassword,encryptedDEK,KEK = keyGeneration(password)
             addItemToPasswordVault = """
-                INSERT INTO "Password Vault" (userID,itemName,username,encryptedPassword,encryptedDEK,originalLengthOfPassword)
+                INSERT INTO "Password Vault" (userID,itemName,username,encryptedPassword,encryptedDEK)
                 VALUES (?,?,?,?,?)"""
             cursor.execute(addItemToPasswordVault, (userID,itemName,username,encryptedPassword,encryptedDEK))
             itemID = self.__itemID(cursor)
             addItemToKEKs = """
                 INSERT INTO "KEKs"(itemID,KEK)
-                VALUES (?,?,?)"""
+                VALUES (?,?)"""
             cursor.execute(addItemToKEKs,(itemID,KEK))
             print("\nYou have successfully added a new item!")
+            addToAccessLogs("addInformation",userID,itemID,cursor)
             return True
         except:
             print("\nIt looks like something went wrong... Please try again.")

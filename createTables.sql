@@ -18,16 +18,12 @@ CREATE TABLE IF NOT EXISTS "Password Vault"(
     "username" VARCHAR(50) NOT NULL,
     "encryptedPassword" VARCHAR(255) NOT NULL,
     "encryptedDEK" VARCHAR(255) NOT NULL,
-    "originalLengthOfPassword" INTEGER NOT NULL,
-    "padded" BOOLEAN NOT NULL,
-    "matrixLengths" INTEGER NOT NULL,
     FOREIGN KEY ("userID") REFERENCES "Logins"("userID")
 );
 
 CREATE TABLE IF NOT EXISTS "KEKs"(
     "itemID" INTEGER PRIMARY KEY AUTOINCREMENT,
     "KEK" VARCHAR(255) NOT NULL,
-    "padded" BOOLEAN NOT NULL,
     FOREIGN KEY ("itemID") REFERENCES "Password Vault"("itemID")
 );
 
@@ -36,7 +32,7 @@ CREATE TABLE IF NOT EXISTS "Access Logs"(
     "itemID" INTEGER NOT NULL,
     "dateCreated" DATETIME NOT NULL,
     "lastAccessed" DATETIME NOT NULL,
-    "functionApplied" DATETIME NOT NULL,
+    "functionApplied" TEXT NOT NULL,
     FOREIGN KEY ("userID") REFERENCES "Logins"("userID"),
     FOREIGN KEY ("itemID") REFERENCES "PasswordVault"("itemID")
 )
