@@ -23,16 +23,16 @@ def addUsername():
                 if optionForRandomGeneration.lower() == "y" or optionForRandomGeneration == "":
                     print("\nPlease randomly type on the keyboard: (Press the \"tab\" key to submit)")
                     randomlyGeneratedPassword = randomGeneration()
-                    pressEnter = input("\nPress enter to submit your password: ")
-                    if pressEnter == "":
+                    pressEnter = input("\nPress \"Enter\" to commit: ")
+                    if pressEnter:
                         lengthOfRGPassword = 0
                         for i in range(len(randomlyGeneratedPassword)-1,0,-1):
                             if not str(randomlyGeneratedPassword[i]).isdigit():
                                 lengthOfRGPassword = str(i)
                                 break
-                        desriredLengthOfRGPassword = input("\nHow long would you like your password to be? (up to "+str(lengthOfRGPassword)+"): ")
+                        desriredLengthOfRGPassword = input("\nHow long would you like your password to be? (up to "+str(lengthOfRGPassword)+" characters): ")
                         password = randomlyGeneratedPassword[:int(desriredLengthOfRGPassword)]
-                        print("\nHere is your password:"+password+"\n"+strongPasswordInfomation)
+                        print("\nHere is your password: "+password+"\n"+strongPasswordInfomation)
                         userApproval = input("\nWould you like to submit this password? (Y): ")
                         if userApproval.lower() == "y" or userApproval == "":
                             return username,password
@@ -92,11 +92,12 @@ def passwordVault(currentUser, conn, cursor):
 
     while True:
         while True:
-            retrieveOrAdd = input("\nWould you like to retrieve, export or add new information? (R/E/A): (press \"Enter\" to return to sign out)")
+            retrieveOrAdd = input("\nWould you like to see your access logs, retrieve, export or add new information? (access logs OR R/E/A): (press \"Enter\" to sign out)  ")
             if retrieveOrAdd.lower() == "r":
                 successful = currentUser.retrieveLogins(cursor)
                 if successful:
-                    break
+                    conn.commit()
+                    continue
                 else:
                     continue
             elif retrieveOrAdd.lower() == "a":
@@ -105,13 +106,16 @@ def passwordVault(currentUser, conn, cursor):
                 successful = currentUser.addItem(itemName, username, password, cursor)
                 if successful:
                     conn.commit()
+                    continue
                 else:
                     continue
-                break
             elif retrieveOrAdd.lower() == "e":
                 currentUser.exportInfo(cursor)
+                continue
             elif retrieveOrAdd == "":
-                mainMenu()
+                mainMenu(conn,cursor)
+            elif retrieveOrAdd.lower() == "access logs":
+                currentUser.accessLogs(cursor)
             else:
                 print("\nHmmmm, looks like you didn't enter a valid option... Try again.")
 

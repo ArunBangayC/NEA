@@ -159,10 +159,19 @@ class User():
             itemName = input("\nPlease enter the name of the application or website that you want to retrieve or enter \"update\"/\"U\" if you want to update information on an existing item: ")
 
             if itemName.lower() != "update" and itemName.lower() != "u":
+                possibleItems = []
                 for i in userInfo:
                     if (i[0]).lower() == itemName.lower():
-                        itemID = i[2]
-                        break
+                        possibleItems.append(i[2])
+
+                if len(possibleItems) > 1:
+                    wantedUsername = input("\nPlease enter the username for "+itemName+": ")
+                    for i in userInfo:
+                        if (i[0]).lower() == itemName.lower() and (i[1]).lower() == wantedUsername.lower():
+                            itemID = i[2]
+                            break
+                else:
+                    itemID = possibleItems[0]
                 
                 grabItemInfo = """
                 SELECT itemName,username,encryptedPassword,encryptedDEK
@@ -200,7 +209,6 @@ class User():
         
     def exportInfo(self,cursor):
         confirmation = input("\nAre you sure you would like to export your passwords? (please type \"yes\" in full): ")
-        # try:
         if confirmation.lower() == "yes":
             getPasswordInfo = """
             SELECT pv.itemName, pv.username, pv.encryptedPassword, pv.encryptedDEK, k.KEK
@@ -260,7 +268,7 @@ class User():
         userID = (self.__userID(cursor))
         cursor.execute(getItemID,(userID,itemName))
         itemID = cursor.fetchall()
-        return itemID[0][-1]
+        return itemID[-1][0]
     
     def __userID(self,cursor):
         getUserID = """
@@ -270,6 +278,16 @@ class User():
         cursor.execute(getUserID,(self.__username,))
         return cursor.fetchone()[0]
 
+    def accessLogs(self,cursor):
+        userID = self.__userID(cursor)
+        getAccessLogs = """
+        SELECT dateCreated,lastAccessed,functionApplied
+        FROM "Access Logs"
+        WHERE userID = ?"""
+        cursor.execute(getAccessLogs,(userID,))
+        accessLogs = cursor.fetchall()
+        print(tabulate(accessLogs,headers=["dateCreated:","functionApplied:","functionApplied:"],tablefmt="simple_grid"))
+        return True
     
     @staticmethod
     def loginUser(username, password, cursor):
@@ -329,5 +347,7 @@ class NewUser(User):
         FROM "Logins"
         WHERE firstName = ? AND lastName = ?
         """
-        userID = cursor.execute(grabUserInfo,(self.__firstName,self.__lastName))
+        cursor.execute(grabUserInfo,(self.__firstName,self.__lastName))
+        userID = cursor.fetchone()[0]
+        addToAccessLogs("createNewUser",userID,1,cursor)
         return userID,self.__firstName,self.__lastName
