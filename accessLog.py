@@ -21,4 +21,4 @@ def addToAccessLogs(functionApplied,userID,itemID,cursor):
             INSERT INTO "Access Logs"(userID,itemID,dateCreated,lastAccessed,functionApplied)
             VALUES(?,?,?,?,?)
             """
-            cursor.execute(addToLog,(userID,itemID,dateCreated[0],currentDateTime,functionApplied))
+            cursor.execute(addToLog,(userID,itemID,dateCreated[0][0],currentDateTime,functionApplied))

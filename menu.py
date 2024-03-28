@@ -92,7 +92,7 @@ def passwordVault(currentUser, conn, cursor):
 
     while True:
         while True:
-            retrieveOrAdd = input("\nWould you like to retrieve information or add new information? (R or A): ")
+            retrieveOrAdd = input("\nWould you like to retrieve, export or add new information? (R/E/A): ")
             if retrieveOrAdd.lower() == "r":
                 successful = currentUser.retrieveLogins(cursor)
                 if successful:
@@ -108,6 +108,8 @@ def passwordVault(currentUser, conn, cursor):
                 else:
                     continue
                 break
+            elif retrieveOrAdd.lower() == "e":
+                currentUser.exportInfo(cursor)
             else:
                 print("\nHmmmm, looks like you didn't enter a valid option... Try again.")
 

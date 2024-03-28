@@ -1,4 +1,5 @@
 import getpass
+import csv
 from tabulate import tabulate
 from accessLog import addToAccessLogs
 from randomGeneration import randomGeneration
@@ -127,7 +128,6 @@ class User():
                                     continue
                         else:
                             print("\nIt looks like you didn't enter an option... Please try again.")
-                            continue
 
                                     
                 except:
@@ -197,6 +197,35 @@ class User():
         except:
             print("\nIt looks like we couldn't find your passwords... Please try again.")
             return False
+        
+    def exportInfo(self,cursor):
+        confirmation = input("\nWould you like to export your information? (Y or N): ")
+        # try:
+        if confirmation.lower() == "y" or confirmation == "":
+            getPasswordInfo = """
+            SELECT pv.itemName, pv.username, pv.encryptedPassword, pv.encryptedDEK, k.KEK
+            FROM "Password Vault" AS pv
+            INNER JOIN "KEKs" AS k ON pv.itemID = k.itemID
+            """
+            cursor.execute(getPasswordInfo)
+            passwordInfo = cursor.fetchall()
+
+            exportInfo = []
+            for item in passwordInfo:
+                itemName,username,encryptedPassword,encryptedDEK, KEK = item
+                decryptedDEK = decryption(encryptedDEK, KEK)
+                decryptedPassword = decryption(encryptedPassword, decryptedDEK)
+                decryptedPassword = decryptedPassword.replace("\x00","")
+                exportInfo.append([itemName,username,decryptedPassword])
+            
+            filePath = input("\nPlease enter the file path where you would like to save your information: ")
+
+            with open(filePath,"w",newline="") as file:
+                writer = csv.writer(file)
+                writer.writerow(['Item Name', 'Username', 'Password'])
+                for item in exportInfo:
+                    file.write(item[0]+","+item[1]+","+item[2]+"\n")
+
             
     def addItem(self,itemName,username,password,cursor):
         try:
@@ -206,7 +235,7 @@ class User():
                 INSERT INTO "Password Vault" (userID,itemName,username,encryptedPassword,encryptedDEK)
                 VALUES (?,?,?,?,?)"""
             cursor.execute(addItemToPasswordVault, (userID,itemName,username,encryptedPassword,encryptedDEK))
-            itemID = self.__itemID(cursor)
+            itemID = self.__itemID(itemName,cursor)
             addItemToKEKs = """
                 INSERT INTO "KEKs"(itemID,KEK)
                 VALUES (?,?)"""
@@ -218,14 +247,15 @@ class User():
             print("\nIt looks like something went wrong... Please try again.")
             return False
     
-    def __itemID(self,cursor):
+    def __itemID(self,itemName,cursor):
         getItemID = """
             SELECT itemID
             FROM "Password Vault"
-            WHERE userID = ?"""
+            WHERE userID = ? AND itemName = ?"""
         userID = (self.__userID(cursor))
-        cursor.execute(getItemID,(userID,))
-        return cursor.fetchone()[0]
+        cursor.execute(getItemID,(userID,itemName))
+        itemID = cursor.fetchall()
+        return itemID[0][-1]
     
     def __userID(self,cursor):
         getUserID = """
