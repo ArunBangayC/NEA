@@ -220,11 +220,16 @@ class User():
             
             filePath = input("\nPlease enter the file path where you would like to save your information: ")
 
-            with open(filePath,"w",newline="") as file:
-                writer = csv.writer(file)
-                writer.writerow(['Item Name', 'Username', 'Password'])
-                for item in exportInfo:
-                    file.write(item[0]+","+item[1]+","+item[2]+"\n")
+            try:
+                with open(filePath,"w",newline="") as file:
+                    writer = csv.writer(file)
+                    writer.writerow(['Item Name', 'Username', 'Password'])
+                    for item in exportInfo:
+                        file.write(item[0]+","+item[1]+","+item[2]+"\n")
+                    return True
+            except:
+                print("\nIt looks like we couldn't find the file... Please try again.")
+                return False
 
             
     def addItem(self,itemName,username,password,cursor):
