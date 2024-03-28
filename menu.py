@@ -43,7 +43,7 @@ def addUsername():
                     password = addPassword()
                     return username,password
         else:
-            addUsername()
+            return addUsername()
     except:
         print("\nHmmmm, that didn't seem to work... Try again.")
         return addUsername()
@@ -51,7 +51,7 @@ def addUsername():
 def addNewUser(conn,cursor):
     fullName = (input("\nPlease enter your first and last name here:  ")).split()
     correctName= input("\nIs this the correct name? (Y):  ")
-    if len(fullName)==2 and correctName.lower() == "y" or correctName.lower() =="":
+    if len(fullName)==2 and (correctName.lower() == "y" or correctName.lower() == ""):
         username,password = addUsername()
         firstName = fullName.pop(0)
         lastName = fullName.pop(0)
