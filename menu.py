@@ -38,12 +38,12 @@ def addUsername():
                             return username,password
                         else:
                             continue
-                    else:
-                        return addUsername()
 
                 elif optionForRandomGeneration.lower() == "n":
                     password = addPassword()
                     return username,password
+        else:
+            addUsername()
     except:
         print("\nHmmmm, that didn't seem to work... Try again.")
         return addUsername()
