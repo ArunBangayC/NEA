@@ -199,9 +199,9 @@ class User():
             return False
         
     def exportInfo(self,cursor):
-        confirmation = input("\nWould you like to export your information? (Y or N): ")
+        confirmation = input("\nAre you sure you would like to export your passwords? (please type \"yes\" in full): ")
         # try:
-        if confirmation.lower() == "y" or confirmation == "":
+        if confirmation.lower() == "yes":
             getPasswordInfo = """
             SELECT pv.itemName, pv.username, pv.encryptedPassword, pv.encryptedDEK, k.KEK
             FROM "Password Vault" AS pv
