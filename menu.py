@@ -31,12 +31,16 @@ def addUsername():
                                 lengthOfRGPassword = str(i)
                                 break
                         desriredLengthOfRGPassword = input("\nHow long would you like your password to be? (up to "+str(lengthOfRGPassword)+" characters): ")
-                        password = randomlyGeneratedPassword[:int(desriredLengthOfRGPassword)]
-                        print("\nHere is your password: "+password+"\n"+strongPasswordInfomation)
-                        userApproval = input("\nWould you like to submit this password? (Y): ")
-                        if userApproval.lower() == "y" or userApproval == "":
-                            return username,password
+                        if desriredLengthOfRGPassword <= lengthOfRGPassword:
+                            password = randomlyGeneratedPassword[:int(desriredLengthOfRGPassword)]
+                            print("\nHere is your password: "+password+"\n"+strongPasswordInfomation)
+                            userApproval = input("\nWould you like to submit this password? (Y): ")
+                            if userApproval.lower() == "y" or userApproval == "":
+                                return username,password
+                            else:
+                                continue
                         else:
+                            print("\nHmmmm, looks like you didn't enter a valid length... Try again.")
                             continue
 
                 elif optionForRandomGeneration.lower() == "n":
