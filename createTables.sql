@@ -34,5 +34,5 @@ CREATE TABLE IF NOT EXISTS "Access Logs"(
     "lastAccessed" DATETIME NOT NULL,
     "functionApplied" TEXT NOT NULL,
     FOREIGN KEY ("userID") REFERENCES "Logins"("userID"),
-    FOREIGN KEY ("itemID") REFERENCES "PasswordVault"("itemID")
+    FOREIGN KEY ("itemID") REFERENCES "Password Vault"("itemID")
 )
